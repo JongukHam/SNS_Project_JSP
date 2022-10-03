@@ -76,9 +76,13 @@ public class FrontController extends HttpServlet {
 	
 	private void saveImage(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
 		request.setCharacterEncoding("UTF-8");
+		//이미지 파일이 저장될 기본위치와, 실제 저장될 파일명
+		// /Users/uk/Coding/Project/JSP/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/sns/ImageFile
+		String ImageFolderPath = request.getServletContext().getRealPath("/ImageFile");
+		String ImageFilePath = "";
 		
 		UploadUtil uploadUtil = UploadUtil.create(request.getServletContext());
-		
+
 		List<Part> parts = (List<Part>) request.getParts();
 		
 		for(Part part : parts) {
@@ -88,8 +92,9 @@ public class FrontController extends HttpServlet {
 			
 			String fileName = part.getSubmittedFileName();
 			
-			uploadUtil.saveFiles(part, uploadUtil.createFilePath());
-			System.out.println(fileName);
+			ImageFilePath = uploadUtil.saveFiles(part, uploadUtil.createFilePath());
+			System.out.println("ImageFolderPath : " + ImageFolderPath);
+			System.out.println("ImageFilePath : " + ImageFilePath);
 		}
 		
 	}

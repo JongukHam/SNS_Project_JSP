@@ -40,10 +40,10 @@ public class UploadUtil {
 	
 	/* 파일 저장 */
 	// createFilePath로 만든 result == folderPath /년/월/일 폴더 경로
-	public void saveFiles(Part filePart, String folderPath) {
-	
-		String realPath = this.uploadPath + File.separator + folderPath; //저장될 실제 폴더 경로
-		String filePath = realPath + File.separator+filePart.getSubmittedFileName();//저장될 실제 경로 + 파일이름
+	public String saveFiles(Part filePart, String folderPath) {
+		String fileName = filePart.getSubmittedFileName(); //파일 이름
+		String realPath = this.uploadPath + File.separator + folderPath; //저장될 실제 폴더 경로(~ImageFile폴더 + 년월일폴더)
+		String filePath = realPath + File.separator+fileName;//저장될 실제 경로 + 파일이름
 		
 		// file이름 중복검사
 		File overLap = new File(filePath);
@@ -59,10 +59,9 @@ public class UploadUtil {
 				filePath = filePath.replaceFirst("(?s)(.*)"+Integer.toString(getFileNum),"$1"+Integer.toString(changedFileNum));
 			}else {
 				int dot = filePath.lastIndexOf(".");
+				//확장자와 확장자앞의 실제 파일경로
 				String withoutExt = filePath.substring(0,dot);
 				String Ext = filePath.substring(dot);
-				System.out.println("withoutExt : "+withoutExt);
-				System.out.println("Ext : "+Ext);
 				filePath = withoutExt+"(1)"+Ext;
 			}
 			overLap = new File(filePath);
@@ -79,16 +78,20 @@ public class UploadUtil {
 			while((len = fis.read(buf, 0, 1024)) != -1) {
 				fos.write(buf, 0, len);
 			}
-				
 			
-			System.out.println("realPath : " + realPath);
-			System.out.println("filePath : " + filePath);
-			System.out.println("fis : " + fis);
-			System.out.println("fos : " + fos);
+			
+			int lastSlash = filePath.lastIndexOf("/");
+			fileName = filePath.substring(lastSlash);
+			
+			
 			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		System.out.println("realPath : " + realPath);
+		System.out.println("filePath : " + filePath);
+		System.out.println("fileName : " + fileName);
+		return File.separator + folderPath + File.pathSeparator + fileName;
 	}
 	
 	/*/ImageFile 하위 폴더 경로 생성 */
@@ -102,7 +105,7 @@ public class UploadUtil {
 		
 		createFolders(result);// 년/월/일의 형태로 폴더생성
 		
-		return result; 
+		return result; // 년/월/일 의 형식의 String return
 	}
 	
 	private void createFolders(String paths) {

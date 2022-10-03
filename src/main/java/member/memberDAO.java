@@ -1,30 +1,33 @@
 package member;
 
+import java.util.ArrayList;
+
+import board.boardDTO;
 import db.JDBConnect;
 
 public class memberDAO extends JDBConnect {
 
-	public String select() {
+	public ArrayList<memberDTO> getSearch(String searchText){
+		ArrayList<memberDTO> searched = new ArrayList<memberDTO>();
+		try {
+			String sql = "select * from membertbl where mid=?";
+			psmt = con.prepareStatement(sql);
+			psmt.setString(1,searchText);
+			rs = psmt.executeQuery();
+			while(rs.next()) {
+				memberDTO dto = new memberDTO();
+				dto.setMid(rs.getString("mid"));
+				searched.add(dto);
+				System.out.println(dto.getMid());
+			}
+		}catch(Exception e) {
+			
+		}finally {
+			close();
+		}
 		
-        String a = ""; 
-        String b = ""; 
-
-        String query = "SELECT * FROM member";
-
-        try {
-            stmt = con.createStatement();   // 쿼리문 생성
-            rs = stmt.executeQuery(query);  // 쿼리 실행
-            if (rs.next()) {
-            	a = rs.getString(1);
-            	b = rs.getString(2);
-            }
-            System.out.println("게시물 수 구하기 성공");
-        }
-        catch (Exception e) {
-            System.out.println("게시물 수 구하기 실패");
-            e.printStackTrace();
-        }
-
-        return a + "   " + b; 
-    }
+		
+		
+		return searched;
+	}
 }

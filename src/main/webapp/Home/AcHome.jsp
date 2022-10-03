@@ -6,12 +6,21 @@
 <html>
 <head>
 <link rel = "stylesheet" href = "http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+
 <meta charset="UTF-8">
-<title>?</title>
+<title>AcHome</title>
+<!-- add Nav -->
+<jsp:include page="../Nav/HomeNav.jsp" flush="true" />
 </head>	
 <body>
 
 	
+	
+	<div class="container" style="text-align:center;">
+		<h1>AcHome</h1>
+		<h3>Served id here =  </h3>
+	</div>
 	
 	
 	

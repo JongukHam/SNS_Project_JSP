@@ -17,7 +17,7 @@ public class JDBConnect{
 		try {
 			Class.forName("org.mariadb.jdbc.Driver");
 			String url 		= "jdbc:mariadb://localhost:3306/sns";
-			String user 	= "root";
+			String user 	= "snsadmin";
 			String password = "1234";
 			con = DriverManager.getConnection(url, user, password);
 			System.out.println("DB 연결 성공");

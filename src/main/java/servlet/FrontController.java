@@ -11,6 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
+import com.oreilly.servlet.MultipartRequest;
+
+import board.boardDAO;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,9 +46,9 @@ public class FrontController extends HttpServlet {
 			System.out.println(requestURI);
 			useSearch(request,response);
 			break;
-		case "/saveImage":
+		case "/uploadBoard":
 			System.out.println(requestURI);
-			saveImage(request,response);
+			uploadBoard(request,response);
 			break;
 		}
 		
@@ -73,8 +77,11 @@ public class FrontController extends HttpServlet {
 	
 	
 	//=======================Write=======================//
-	
-	private void saveImage(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
+	// 이미지 저장하고 ImageFile 아래 경로 구함
+	private void uploadBoard(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
+		//임시 아이디 설정
+		request.setAttribute("memberId", "admin");
+		
 		request.setCharacterEncoding("UTF-8");
 		//이미지 파일이 저장될 기본위치와, 실제 저장될 파일명
 		// /Users/uk/Coding/Project/JSP/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/sns/ImageFile
@@ -84,19 +91,24 @@ public class FrontController extends HttpServlet {
 		UploadUtil uploadUtil = UploadUtil.create(request.getServletContext());
 
 		List<Part> parts = (List<Part>) request.getParts();
+//		System.out.println("title : " + request.getParameter("title"));
+//		System.out.println("content : " + request.getParameter("content"));
 		
 		for(Part part : parts) {
-			
 			if(!part.getName().equals("ImageFile")) continue; //ImageFile로 들어온 Part가 아니면 스킵
 			if(part.getSubmittedFileName().equals("")) continue; //업로드 된 파일 이름이 없으면 스킵
-			
-			String fileName = part.getSubmittedFileName();
+			System.out.println(part.getName());
+			//String fileName = part.getSubmittedFileName();
 			
 			ImageFilePath = uploadUtil.saveFiles(part, uploadUtil.createFilePath());
+			
+			System.out.println("=========saveImage=========");
 			System.out.println("ImageFolderPath : " + ImageFolderPath);
 			System.out.println("ImageFilePath : " + ImageFilePath);
+			System.out.println("=========saveImage=========");
 		}
-		
+		boardDAO dao = new boardDAO();
+		dao.uploadBoard(request, response, ImageFilePath);
 	}
 	
 	

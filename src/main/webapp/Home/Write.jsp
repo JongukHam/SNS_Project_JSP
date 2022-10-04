@@ -66,7 +66,7 @@
 		</div>
 		<div class="writeHere">
 			<p>id
-			<form name="writeForm" method="post" action="/sns/controller/saveImage" enctype="multipart/form-data">
+			<form name="writeForm" method="post" action="/sns/controller/uploadBoard" enctype="multipart/form-data">
 				<input class="i1" type="text" name="title"/>
 				<textarea class="i2" name="content"></textarea>
 				<input class="i3" type="file" name="ImageFile" />

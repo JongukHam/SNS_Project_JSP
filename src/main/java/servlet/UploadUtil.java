@@ -41,31 +41,14 @@ public class UploadUtil {
 	/* 파일 저장 */
 	// createFilePath로 만든 result == folderPath /년/월/일 폴더 경로
 	public String saveFiles(Part filePart, String folderPath) {
-		String fileName = filePart.getSubmittedFileName(); //파일 이름
-		String realPath = this.uploadPath + File.separator + folderPath; //저장될 실제 폴더 경로(~ImageFile폴더 + 년월일폴더)
-		String filePath = realPath + File.separator+fileName;//저장될 실제 경로 + 파일이름
+		String realFileName = filePart.getSubmittedFileName(); //실제 파일 이름
+		int extIndex = realFileName.lastIndexOf(".");
+		String ext = realFileName.substring(extIndex);
 		
-		// file이름 중복검사
-		File overLap = new File(filePath);
-		while(overLap.exists()) {
-			int overLapIndex = filePath.lastIndexOf("(1)");
-			if(overLapIndex != -1) {
-				int secondB = filePath.lastIndexOf(")");
-				int firstB = filePath.lastIndexOf("(");
-				int getFileNum = Integer.parseInt(filePath.substring(firstB+1, secondB));
-				int changedFileNum = getFileNum+1;
-				System.out.println("getFileNum : "+getFileNum);
-				System.out.println("changedFileNum : "+changedFileNum);
-				filePath = filePath.replaceFirst("(?s)(.*)"+Integer.toString(getFileNum),"$1"+Integer.toString(changedFileNum));
-			}else {
-				int dot = filePath.lastIndexOf(".");
-				//확장자와 확장자앞의 실제 파일경로
-				String withoutExt = filePath.substring(0,dot);
-				String Ext = filePath.substring(dot);
-				filePath = withoutExt+"(1)"+Ext;
-			}
-			overLap = new File(filePath);
-		}
+		String saveFileName = createFileName()+ext;
+		String realPath = this.uploadPath + File.separator + folderPath; //저장될 실제 폴더 경로(~ImageFile폴더 + 년월일폴더)
+		String filePath = realPath + File.separator+saveFileName;//저장될 실제 경로 + 파일이름
+		
 		
 		try(
 			InputStream fis = filePart.getInputStream();
@@ -78,20 +61,19 @@ public class UploadUtil {
 			while((len = fis.read(buf, 0, 1024)) != -1) {
 				fos.write(buf, 0, len);
 			}
-			
-			
-			int lastSlash = filePath.lastIndexOf("/");
-			fileName = filePath.substring(lastSlash);
-			
-			
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		System.out.println("=========UploadUtil=========");
 		System.out.println("realPath : " + realPath);
 		System.out.println("filePath : " + filePath);
-		System.out.println("fileName : " + fileName);
-		return File.separator + folderPath + File.pathSeparator + fileName;
+		System.out.println("saveFileName : " + saveFileName);
+		System.out.println("realFileName : " + realFileName);
+		System.out.println("=========UploadUtil=========");
+		
+		return File.separator + folderPath + File.separator + saveFileName ; //년월일 + 파일이름
 	}
 	
 	/*/ImageFile 하위 폴더 경로 생성 */
@@ -114,5 +96,17 @@ public class UploadUtil {
 		
 		if(!folders.exists()) //폴더가 존재하지 않는다면
 			folders.mkdirs(); //폴더를 생성한다.
+	}
+	
+	//랜덤알파벳 + 년월일시간분초 파일 이름 생성
+	public String createFileName() {
+		LocalDateTime date = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
+		String[] paths = formatter.format(date).split("-");
+		String ranAlpha = Character.toString((char)((Math.random() * 26) + 97));
+		String result = ranAlpha + paths[0] + paths[1] + paths[2] + paths[3] + paths[4] + paths[5]; //랜덤알파벳+년월일시간분초
+		
+		return result;
+		
 	}
 }

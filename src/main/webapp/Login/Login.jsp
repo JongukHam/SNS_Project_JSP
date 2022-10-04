@@ -7,11 +7,15 @@
 <head>
 <link rel = "stylesheet" href = "http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 <meta charset="UTF-8">
-<title>?</title>
+<title>Login</title>
 </head>	
 <body>
 
-	
+	<form method="post" action="/sns/controller/Login">
+		<input type ="text" name="mid"/>
+		<input type="text" name="passwd"/>
+		<input type="submit" />
+	</form>
 	
 	
 	

@@ -11,7 +11,7 @@
 <meta charset="UTF-8">
 <title>AcHome</title>
 <!-- add Nav -->
-<jsp:include page="../Nav/HomeNav.jsp" flush="true" />
+<jsp:include page="../Nav/AcNav.jsp" flush="true" />
 </head>	
 <body>
 
@@ -19,7 +19,7 @@
 	
 	<div class="container" style="text-align:center;">
 		<h1>AcHome</h1>
-		<h3>Served id here =  </h3>
+		<h3></h3>
 	</div>
 	
 	

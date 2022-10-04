@@ -9,8 +9,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
+import com.mysql.cj.Session;
 import com.oreilly.servlet.MultipartRequest;
 
 import board.boardDAO;
@@ -20,6 +22,7 @@ import java.util.List;
 
 import member.memberDAO;
 import member.memberDTO;
+
 
 @WebServlet("/controller/*")
 @MultipartConfig(
@@ -31,6 +34,7 @@ public class FrontController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("utf-8");
 		String requestURI = request.getRequestURI();
 		int lastSlash = requestURI.lastIndexOf("/");
 		requestURI = requestURI.substring(lastSlash);
@@ -50,6 +54,13 @@ public class FrontController extends HttpServlet {
 			System.out.println(requestURI);
 			uploadBoard(request,response);
 			break;
+		case "/SettingPage":
+			System.out.println(requestURI);
+			showMemberInfo(request,response);
+			break;
+		case "/Login":
+			System.out.println(requestURI);
+			setLogin(request,response);
 		}
 		
 	}
@@ -80,7 +91,7 @@ public class FrontController extends HttpServlet {
 	// 이미지 저장하고 ImageFile 아래 경로 구함
 	private void uploadBoard(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
 		//임시 아이디 설정
-		request.setAttribute("memberId", "admin");
+		//request.setAttribute("memberId", "admin");
 		
 		request.setCharacterEncoding("UTF-8");
 		//이미지 파일이 저장될 기본위치와, 실제 저장될 파일명
@@ -115,6 +126,45 @@ public class FrontController extends HttpServlet {
 	
 	
 	//=======================Write=======================//
+	
+	
+	//=======================Setting=======================//
+
+	public void showMemberInfo (HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
+		HttpSession session = request.getSession();
+		String mid = (String)session.getAttribute("memberId");
+
+		System.out.println(mid);
+		memberDAO dao = new memberDAO();
+		memberDTO dto = dao.getMemberInfo(request, response, mid);
+		request.setAttribute("memberInfo", dto);
+		
+		RequestDispatcher rd = request.getRequestDispatcher("/Setting/Setting.jsp");
+		rd.forward(request,response);
+	}
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	//=======================Setting=======================//
+	
+	//=======================Login=======================//
+	// 테스트용으로 로그인
+	public void setLogin(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
+		HttpSession session = request.getSession();
+		session.setAttribute("memberId", "admin");
+		response.setContentType("text/html;charset=utf-8");
+		response.sendRedirect("/sns/Home/Home.jsp");
+	}
+	
+	//=======================Login=======================//
 	
 	
 	

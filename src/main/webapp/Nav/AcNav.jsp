@@ -9,9 +9,6 @@
 
 <!-- 반응형 css 위해 -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-
 <!-- style here -->
 <style>
 #AcNav {
@@ -93,13 +90,10 @@
 <!-- html here -->
 <nav id="AcNav">
     <a href="/sns/controller/goHome">StarGram</a>
-    
+ 
     <form method="post" name="searchForm" action="/sns/controller/getSearch">
     	<input type="text" name="searchText" />
     </form>
-
-    
-    
     <ul >
       <li class="n-sideBar"><a href="#"><i class="fa-regular fa-heart"></i></a></li>
       <li class="n-sideBar"><a href="#"><i class="fa-solid fa-paper-plane"></i></a></li>

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -72,6 +73,7 @@ public class FrontController extends HttpServlet {
 			System.out.println(requestURI);
 			deleteAccount(request,response);
 			break;
+
 		}
 		
 	}
@@ -82,14 +84,13 @@ public class FrontController extends HttpServlet {
 		response.setContentType("text/html;charset=utf-8");
 		response.sendRedirect("/sns/Home/Home.jsp");
 	}
-	// 검색한 아이디의 페이지로 이동하기 포워드로 아이디 정보를 아이디페이지 보여주는 메소드로 넘기게 한다.
+	// 검색한 문자가 포함된 아이디를 arraylist에 담아서 arraylist 리턴
 	private void useSearch(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
 		String searchText = request.getParameter("searchText");
-		ArrayList<memberDTO> list;
 		memberDAO dao = new memberDAO();
-		list = dao.getSearch(searchText);
 		
-		request.setAttribute("List", list);
+		ArrayList<String> searchedMid = dao.getSearch(searchText);
+		request.setAttribute("searchedList", searchedMid);
 		RequestDispatcher rd = request.getRequestDispatcher("/Home/AcHome.jsp");
 		rd.forward(request,response);
 	}
@@ -101,9 +102,7 @@ public class FrontController extends HttpServlet {
 	//=======================Write=======================//
 	// 이미지 저장하고 ImageFile 아래 경로 구함
 	private void uploadBoard(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
-		//임시 아이디 설정
-		request.setAttribute("memberId", "admin");
-		
+
 		request.setCharacterEncoding("UTF-8");
 		//이미지 파일이 저장될 기본위치와, 실제 저장될 파일명
 		// /Users/uk/Coding/Project/JSP/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/sns/ImageFile
@@ -133,14 +132,14 @@ public class FrontController extends HttpServlet {
 		dao.uploadBoard(request, response, ImageFilePath);
 	}
 	
-	
+
 	
 	
 	//=======================Write=======================//
 	
 	
 	//=======================Setting=======================//
-
+	//setting 페이지에 로그인된 회원 정보 뿌림
 	public void showMemberInfo (HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
 		HttpSession session = request.getSession();
 		String mid = (String)session.getAttribute("memberId");
@@ -153,25 +152,20 @@ public class FrontController extends HttpServlet {
 		RequestDispatcher rd = request.getRequestDispatcher("/Setting/Setting.jsp");
 		rd.forward(request,response);
 	}
-	
+	// 로그인된 회원 계정 삭제관련
 	public void deleteAccount(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
 		response.setContentType("text/html; charset=UTF-8");
 		HttpSession session = request.getSession();
 		PrintWriter out = response.getWriter();
-		String mid = (String)session.getAttribute("memberId");
 		
-		String enterPassword = request.getParameter("password");
+		String mid = (String)session.getAttribute("memberId"); //세션에 로그인되있는 아이디
+		String enterPassword = request.getParameter("password"); // 삭제를 위해서 입력한 비밀번호
 
 		memberDAO dao = new memberDAO();
-//		
-//		if(!dto.getPw().equals(enterPassword)) {
-//			out.println("<script> alert('패스워드가 일치하지 않습니다.');location.href='/sns/Setting/Setting.jsp'; </script>;");
-//			out.close();
-//		}else {
-//			session.removeAttribute("memberId");
-//			out.println("<script> alert('탈퇴 되었습니다.');location.href='/sns/Login/Login.jsp'; </script>;");
-//		}
+		String delStatus = dao.deleteAccount(request, response, mid, enterPassword,session);
 		
+		out.println(delStatus);
+		out.close();
 	}
 	
 	//=======================Setting=======================//
@@ -180,8 +174,9 @@ public class FrontController extends HttpServlet {
 	// 테스트용으로 로그인
 	public void setLogin(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
 		HttpSession session = request.getSession();
-		session.setAttribute("memberId", "admin");
+
 		response.setContentType("text/html;charset=utf-8");
+		session.setAttribute("memberId", request.getParameter("mid"));
 		response.sendRedirect("/sns/Home/Home.jsp");
 	}
 	

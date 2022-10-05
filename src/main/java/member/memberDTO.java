@@ -10,9 +10,16 @@ public class memberDTO {
    private String name;
    private String birth;
    private String follower;
+   private String intro;
    
-   public String getMid() {
-      return mid;
+	public String getIntro() {
+		return intro;
+	}
+	public void setIntro(String intro) {
+		this.intro = intro;
+	}
+	public String getMid() {
+	      return mid;
    }
    public void setMid(String mid) {
       this.mid = mid;

@@ -41,4 +41,19 @@ public class JDBConnect{
 			e.printStackTrace();
 		}
 	}
+	
+	public void reConnect() {
+		try {
+			Class.forName("org.mariadb.jdbc.Driver");
+			String url 		= "jdbc:mariadb://localhost:3306/sns";
+			String user 	= "snsadmin";
+			String password = "1234";
+			con = DriverManager.getConnection(url, user, password);
+			System.out.println("DB 연결 성공");
+		} 
+		catch(Exception e) {
+			System.out.println("DB 연결 실패");
+			e.printStackTrace();
+		}
+	}
 }

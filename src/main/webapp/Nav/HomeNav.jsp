@@ -5,7 +5,6 @@
 <link rel = "stylesheet" href = "http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 <!-- 폰트어썸 아이콘 사용 -->
 <script src="https://kit.fontawesome.com/eef3a2c2a0.js" crossorigin="anonymous"></script>
-
 <!-- 반응형 css 위해 -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -96,8 +95,6 @@
     	<input type="text" name="searchText" />
     </form>
 
-    
-    
     <ul >
       <li class="n-sideBar"><a href="#"><i class="fa-regular fa-heart"></i></a></li>
       <li class="n-sideBar"><a href="#"><i class="fa-solid fa-paper-plane"></i></a></li>

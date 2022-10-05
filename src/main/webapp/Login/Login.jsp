@@ -13,7 +13,6 @@
 	<h1>현재 세션 = ${memberId }</h1>
 	<form method="post" action="/sns/controller/Login">
 		<input type ="text" name="mid"/>
-		<input type="text" name="passwd"/>
 		<input type="submit" />
 	</form>
 	

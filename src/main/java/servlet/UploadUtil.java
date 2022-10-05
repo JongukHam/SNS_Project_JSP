@@ -49,7 +49,6 @@ public class UploadUtil {
 		String realPath = this.uploadPath + File.separator + folderPath; //저장될 실제 폴더 경로(~ImageFile폴더 + 년월일폴더)
 		String filePath = realPath + File.separator+saveFileName;//저장될 실제 경로 + 파일이름
 		
-		
 		try(
 			InputStream fis = filePart.getInputStream();
 			OutputStream fos = new FileOutputStream(filePath);)

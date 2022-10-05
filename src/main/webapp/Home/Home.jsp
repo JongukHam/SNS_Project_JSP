@@ -8,9 +8,9 @@
 <link rel = "stylesheet" href = "http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 <meta charset="UTF-8">
 <title>Home</title>
-</head>	
 <!-- add Nav -->
 <jsp:include page="../Nav/HomeNav.jsp" flush="true" />
+</head>	
 <body>
 
 

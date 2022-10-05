@@ -1,6 +1,7 @@
 package servlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -58,9 +59,19 @@ public class FrontController extends HttpServlet {
 			System.out.println(requestURI);
 			showMemberInfo(request,response);
 			break;
+		//임시
 		case "/Login":
 			System.out.println(requestURI);
 			setLogin(request,response);
+			break;
+		case "/Logout":
+			System.out.println(requestURI);
+			setLogout(request,response);
+			break;
+		case "/deleteAccount" :
+			System.out.println(requestURI);
+			deleteAccount(request,response);
+			break;
 		}
 		
 	}
@@ -91,7 +102,7 @@ public class FrontController extends HttpServlet {
 	// 이미지 저장하고 ImageFile 아래 경로 구함
 	private void uploadBoard(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
 		//임시 아이디 설정
-		//request.setAttribute("memberId", "admin");
+		request.setAttribute("memberId", "admin");
 		
 		request.setCharacterEncoding("UTF-8");
 		//이미지 파일이 저장될 기본위치와, 실제 저장될 파일명
@@ -143,19 +154,29 @@ public class FrontController extends HttpServlet {
 		rd.forward(request,response);
 	}
 	
-	
-	
+	public void deleteAccount(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
+		response.setContentType("text/html; charset=UTF-8");
+		HttpSession session = request.getSession();
+		PrintWriter out = response.getWriter();
+		String mid = (String)session.getAttribute("memberId");
+		
+		String enterPassword = request.getParameter("password");
 
-	
-	
-	
-	
-	
-	
+		memberDAO dao = new memberDAO();
+//		
+//		if(!dto.getPw().equals(enterPassword)) {
+//			out.println("<script> alert('패스워드가 일치하지 않습니다.');location.href='/sns/Setting/Setting.jsp'; </script>;");
+//			out.close();
+//		}else {
+//			session.removeAttribute("memberId");
+//			out.println("<script> alert('탈퇴 되었습니다.');location.href='/sns/Login/Login.jsp'; </script>;");
+//		}
+		
+	}
 	
 	//=======================Setting=======================//
 	
-	//=======================Login=======================//
+	//=======================Log=======================//
 	// 테스트용으로 로그인
 	public void setLogin(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
 		HttpSession session = request.getSession();
@@ -164,7 +185,13 @@ public class FrontController extends HttpServlet {
 		response.sendRedirect("/sns/Home/Home.jsp");
 	}
 	
-	//=======================Login=======================//
+	public void setLogout(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
+		HttpSession session = request.getSession();
+		session.removeAttribute("memberId");
+		response.sendRedirect("/sns/Login/Login.jsp");
+	}
+	
+	//=======================Log=======================//
 	
 	
 	

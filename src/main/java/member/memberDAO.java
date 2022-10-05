@@ -64,7 +64,10 @@ public class memberDAO extends JDBConnect {
 		return memberInfo;
 	}
 
-
+	public void deleteAccount(HttpServletRequest request,HttpServletResponse response, String mid, String password) {
+		memberDTO dto = new memberDTO();
+		
+	}
 
 
 

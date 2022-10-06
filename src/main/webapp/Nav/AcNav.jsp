@@ -2,15 +2,9 @@
 <%@page import="java.sql.*" %>
 <%@taglib prefix = "c"	 uri="http://java.sun.com/jsp/jstl/core"%>
 
-<!-- 부트스트랩 4.0버전 사 -->
-<link rel = "stylesheet" href = "http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-<!-- 폰트어썸 아이콘 사용 -->
-<script src="https://kit.fontawesome.com/eef3a2c2a0.js" crossorigin="anonymous"></script>
-
-<!-- 반응형 css 위해 -->
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- style here -->
+<jsp:include page="../CssLink/CssLink.jsp" flush="true" />
 <style>
+	* { font-family: 'Spoqa Han Sans Neo', 'sans-serif'; }
 #AcNav {
   width: 100%;
   position: relative;
@@ -95,12 +89,15 @@
     	<input type="text" name="searchText" />
     </form>
     <ul >
+<!--알림 -->
       <li class="n-sideBar"><a href="#"><i class="fa-regular fa-heart"></i></a></li>
+<!--DM-->
       <li class="n-sideBar"><a href="#"><i class="fa-solid fa-paper-plane"></i></a></li>
-      <li class="n-sideBar"><a href="#"><i class="fa-solid fa-pen"></i></a></li>
-      <li class="n-sideBar"><a href="#"><i class="fa-solid fa-circle-user"></i></a></li>
-      <li class="n-sideBar"><a href="/sns/controller/SettingPage"><i class="fa-solid fa-gear"></i></a></li>
-      
+<!-- 홈으로 가기 -->
+      <li class="n-sideBar"><a href="/sns/controller/goHome"><i class="fa-solid fa-house"></i></a></li>
+<!--내페이지-->   
+      <li class="n-sideBar"><a href="/sns/controller/goMyPage"><i class="fa-solid fa-circle-user"></i></a></li>
+<!--햄버거-->  
       <li class="sideBar"><a href="#"><i class="fa-solid fa-bars"></i></a></li>
     </ul>
 

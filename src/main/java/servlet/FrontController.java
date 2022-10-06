@@ -43,19 +43,27 @@ public class FrontController extends HttpServlet {
 		
 		
 		switch(requestURI) {
-		//goHome 이라는 요청이 들어오면 리다이렉트로 Home.jsp로 가도록 함.
+		//Nav
 		case "/goHome":
 			System.out.println(requestURI);
 			goHome(request,response);
 			break;
+		//Nav
 		case "/getSearch":
 			System.out.println(requestURI);
 			useSearch(request,response);
 			break;
+		//Nav
+		case "/goMyPage":
+			System.out.println(requestURI);
+			goMyPage(request,response);
+			break;
+		//Write
 		case "/uploadBoard":
 			System.out.println(requestURI);
 			uploadBoard(request,response);
 			break;
+		//Setting
 		case "/SettingPage":
 			System.out.println(requestURI);
 			showMemberInfo(request,response);
@@ -69,11 +77,15 @@ public class FrontController extends HttpServlet {
 			System.out.println(requestURI);
 			setLogout(request,response);
 			break;
+		//Setting
 		case "/deleteAccount" :
 			System.out.println(requestURI);
 			deleteAccount(request,response);
 			break;
-
+		case "/changePrivateStatus":
+			System.out.println(requestURI);
+			setPrivateAc(request,response);
+			break;
 		}
 		
 	}
@@ -84,16 +96,48 @@ public class FrontController extends HttpServlet {
 		response.setContentType("text/html;charset=utf-8");
 		response.sendRedirect("/sns/Home/Home.jsp");
 	}
-	// 검색한 문자가 포함된 아이디를 arraylist에 담아서 arraylist 리턴
+	
+	
+	// 내 페이지 가기
+	private void goMyPage(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		
+		// 한글로 출력 위해서
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html;charset=utf-8");
+		
+		PrintWriter out = response.getWriter();
+		
+		if((String)session.getAttribute("memberId") != null) {
+			String mid = (String)session.getAttribute("memberId");
+			if(!mid.equals("")) {
+				response.sendRedirect("/sns/Home/SelfHome.jsp");
+			}else {
+				out.println("<script> alert('로그인 해 주십시오');location.href='/sns/controller/goHome'; </script>;");
+				out.close();
+			}
+		}else {
+			out.println("<script> alert('로그인 해 주십시오');location.href='/sns/controller/goHome'; </script>;");
+			out.close();
+		}
+		
+		
+	}
+	
+	
+	// 검색한 문자가 포함된 아이디들 리턴
 	private void useSearch(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
 		String searchText = request.getParameter("searchText");
 		memberDAO dao = new memberDAO();
 		
-		ArrayList<String> searchedMid = dao.getSearch(searchText);
-		request.setAttribute("searchedList", searchedMid);
-		RequestDispatcher rd = request.getRequestDispatcher("/Home/AcHome.jsp");
+		ArrayList<memberDTO> searchedList = dao.getSearch(searchText);
+		request.setAttribute("searchedList", searchedList);
+		
+		RequestDispatcher rd = request.getRequestDispatcher("/Home/SearchedMember.jsp");
 		rd.forward(request,response);
 	}
+	
 
 	//=======================Nav=======================//
 	
@@ -140,7 +184,7 @@ public class FrontController extends HttpServlet {
 	
 	//=======================Setting=======================//
 	//setting 페이지에 로그인된 회원 정보 뿌림
-	public void showMemberInfo (HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
+	private void showMemberInfo (HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
 		HttpSession session = request.getSession();
 		String mid = (String)session.getAttribute("memberId");
 
@@ -153,7 +197,7 @@ public class FrontController extends HttpServlet {
 		rd.forward(request,response);
 	}
 	// 로그인된 회원 계정 삭제관련
-	public void deleteAccount(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
+	private void deleteAccount(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
 		response.setContentType("text/html; charset=UTF-8");
 		HttpSession session = request.getSession();
 		PrintWriter out = response.getWriter();
@@ -168,11 +212,35 @@ public class FrontController extends HttpServlet {
 		out.close();
 	}
 	
+	// 계정상태 비공개로 전환(공개="no" 비공개="yes")
+	private void setPrivateAc(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
+		HttpSession session = request.getSession();
+		
+		// 한글로 출력 위해서
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html;charset=utf-8");
+		
+		PrintWriter out = response.getWriter();
+		
+		
+		String mid = (String)session.getAttribute("memberId");
+		
+		memberDAO dao = new memberDAO();
+		memberDTO dto = dao.getMemberInfo(request, response, mid);
+		
+		String changeStatus = dao.changePrivateState(request, response, dto);
+		out.println(changeStatus);
+		out.close();
+	}
+	
+	
+	
 	//=======================Setting=======================//
 	
 	//=======================Log=======================//
 	// 테스트용으로 로그인
-	public void setLogin(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
+	private void setLogin(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
 		HttpSession session = request.getSession();
 
 		response.setContentType("text/html;charset=utf-8");
@@ -180,7 +248,7 @@ public class FrontController extends HttpServlet {
 		response.sendRedirect("/sns/Home/Home.jsp");
 	}
 	
-	public void setLogout(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
+	private void setLogout(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
 		HttpSession session = request.getSession();
 		session.removeAttribute("memberId");
 		response.sendRedirect("/sns/Login/Login.jsp");

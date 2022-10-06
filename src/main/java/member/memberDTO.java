@@ -11,7 +11,16 @@ public class memberDTO {
    private String birth;
    private String follower;
    private String intro;
+   private String isprivate;
    
+   
+   
+  public String getIsprivate() {
+		return isprivate;
+	}
+	public void setIsprivate(String isprivate) {
+		this.isprivate = isprivate;
+	}
 	public String getIntro() {
 		return intro;
 	}

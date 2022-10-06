@@ -5,13 +5,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
-
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-
+<jsp:include page="../CssLink/CssLink.jsp" flush="true" />
 <meta charset="UTF-8">
 <title>SettingPage</title>
 <style>
@@ -78,8 +72,9 @@
 					<li>이메일</li>
 					<li>전화번호</li>
 					<li>생년월일</li>
-					<br/>
-					<br/>
+					<li></li>
+					<li></li>
+					<li class="changePrivate"><a href="#" data-toggle="modal" data-target="#changePrivate">공개범위 변경</a></li>
 					<li class="Logout"><a href="#" data-toggle="modal" data-target="#logout">로그아웃</a></li>
 					<li class = "delAccount"><a href="#" data-toggle="modal" data-target="#delAcModal">회원탈퇴</a></li>
 				</ul>
@@ -91,12 +86,17 @@
 					<li>${memberInfo.getEmail() }</li>
 					<li>${memberInfo.getPhone() }</li>
 					<li>${memberInfo.getBirth() }</li>
+					<li>${memberInfo.getIsprivate() }</li>
+					<li></li>
+					<li></li>
 				</ul>
 			</div>
 	</div>
 </div>
 
 <!-- 모달창 -->
+
+<!-- 로그아웃 모달 -->
 	<div class="modal" id="logout">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -119,7 +119,8 @@
 			</div>
 		</div>
 	</div>
-
+	
+<!-- 	삭제 모달 -->
 	<div class="modal" id="delAcModal">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -149,13 +150,33 @@
 						</div>
 					</form>
 				</div>
-
-				
-				
 			</div>
 		</div>
 	</div>
 
+<!-- 계정 비공개 모달 -->
+<div class="modal" id="changePrivate">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">계정 공개 설정</h4>
+				</div>
+
+				<!-- Modal body -->
+				<div class="modal-body">
+					<p>계정의 공개범위를 변경 하시겠습니까?
+				</div>
+
+				<!-- Modal footer -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">취소</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"onclick="location.href='/sns/controller/changePrivateStatus'">상태변경</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 
 </body>

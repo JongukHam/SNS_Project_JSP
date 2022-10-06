@@ -9,8 +9,8 @@ public class boardDTO {
     private String likeCount;
     private String photo;
     private String id;
-    
-   public String getBid() {
+
+public String getBid() {
       return bid;
    }
    public void setBid(String bid) {

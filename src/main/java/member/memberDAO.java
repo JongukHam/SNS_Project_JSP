@@ -11,19 +11,37 @@ import board.boardDTO;
 import db.JDBConnect;
 
 public class memberDAO extends JDBConnect {
-	//구현해야함
-	public ArrayList<String> getSearch(String searchText){
-		ArrayList<String> searched = new ArrayList<String>();
+	//검색한 문자가 포함된 아이디를 리스트 리턴
+	public ArrayList<memberDTO> getSearch(String searchText){
+		ArrayList<memberDTO> searched = new ArrayList<memberDTO>();
 		try {
 			String sql = "select * from membertbl where mid like ?";
 			psmt = con.prepareStatement(sql);
 			psmt.setString(1,"%"+searchText+"%");
 			rs = psmt.executeQuery();
 			while(rs.next()) {
-				searched.add(rs.getString("mid"));
+				memberDTO dto = new memberDTO();
+				dto.setName(rs.getString("name"));
+				dto.setEmail(rs.getString("email"));
+				dto.setPhone(rs.getString("phone"));
+				SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
+				dto.setBirth(sd.format(rs.getDate("birth")));
+				dto.setPw(rs.getString("pw"));
+				dto.setFollower(rs.getString("follower"));
+				dto.setPfp(rs.getString("pfp"));
+				dto.setMid(rs.getString("mid"));
+				dto.setIntro(rs.getString("intro"));
+				if(rs.getString("isprivate").equals("yes")) {
+					dto.setIsprivate("비공개");
+				}else if(rs.getString("isprivate").equals("no")) {
+					dto.setIsprivate("공개");
+				}else {
+					dto.setIsprivate("공개");
+				}
+				searched.add(dto);
 			}
 		}catch(Exception e) {
-			
+			e.printStackTrace();
 		}finally {
 			close();
 		}
@@ -52,6 +70,14 @@ public class memberDAO extends JDBConnect {
 				memberInfo.setPfp(rs.getString("pfp"));
 				memberInfo.setMid(mid);
 				memberInfo.setIntro(rs.getString("intro"));
+				if(rs.getString("isprivate").equals("yes")) {
+					memberInfo.setIsprivate("비공개");
+				}else if(rs.getString("isprivate").equals("no")) {
+					memberInfo.setIsprivate("공개");
+				}else {
+					memberInfo.setIsprivate("공개");
+				}
+				
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -89,7 +115,54 @@ public class memberDAO extends JDBConnect {
 		}
 		return delStatus;
 	}
+	//공개범위 변경 공개 비공개
+	public String changePrivateState(HttpServletRequest request,HttpServletResponse response,memberDTO dto) {
+		String changeStatus="";
+		String isPrivate = dto.getIsprivate();
 
+		String sql = "update membertbl set isprivate=? where mid= ? ";
+		
+		if(isPrivate.equals("공개")) {
+			try {
+				reConnect();
+				psmt = con.prepareStatement(sql);
+				psmt.setString(1, "yes");
+				psmt.setString(2, dto.getMid());
+				
+				if(psmt.executeUpdate()>0) {
+					changeStatus="<script> alert('비공개로 전환 되었습니다.');location.href='/sns/controller/SettingPage'; </script>;";
+				}else {
+					changeStatus="<script> alert('설정이 실패했습니다.');location.href='/sns/controller/SettingPage'; </script>;";
+				}
+			}catch(Exception e) {
+				e.printStackTrace();
+			}finally{
+				close();
+			}
+		}else if(isPrivate.equals("비공개")) {
+			try {
+				reConnect();
+				psmt = con.prepareStatement(sql);
+				psmt.setString(1, "no");
+				psmt.setString(2, dto.getMid());
+				
+				if(psmt.executeUpdate()>0) {
+					changeStatus="<script> alert('공개로 전환 되었습니다.');location.href='/sns/controller/SettingPage'; </script>;";
+				}else {
+					changeStatus="<script> alert('설정이 실패했습니다.');location.href='/sns/controller/SettingPage'; </script>;";
+				}
+			}catch(Exception e) {
+				e.printStackTrace();
+			}finally{
+				close();
+			}
+		}else {
+			changeStatus="<script> alert('설정이 실패했습니다.');location.href='/sns/controller/SettingPage'; </script>;";
+		}
+		return changeStatus;
+	}
 
+	
+	
 
 }

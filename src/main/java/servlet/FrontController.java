@@ -18,12 +18,14 @@ import com.mysql.cj.Session;
 import com.oreilly.servlet.MultipartRequest;
 
 import board.boardDAO;
+import notice.NotiDAO;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import member.memberDAO;
 import member.memberDTO;
+
 
 
 @WebServlet("/controller/*")
@@ -34,91 +36,110 @@ import member.memberDTO;
 	)
 public class FrontController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("utf-8");
+		
+		System.out.println("==========service srt==========");
+		
+		
+		HttpSession session = request.getSession();
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html;charset=utf-8");
+		String LoginedID = (String)session.getAttribute("memberId");
+		
 		String requestURI = request.getRequestURI();
 		int lastSlash = requestURI.lastIndexOf("/");
 		requestURI = requestURI.substring(lastSlash);
-		
+		System.out.println(requestURI);
 		
 		switch(requestURI) {
-		//Nav
-		case "/goHome":
-			System.out.println(requestURI);
-			goHome(request,response);
+		// ===========================페이지로 보내는 컨트롤러===========================
+		case "/HomePage":
+			request.getRequestDispatcher("/Home/Home.jsp").forward(request, response);
 			break;
+		case "/LoginPage":
+			request.getRequestDispatcher("/Login/Login.jsp").forward(request, response);
+			break;
+		case "/SettingPage":
+			showMemberInfo(request,response,session);
+			break;
+		case "/WritePage":
+			request.getRequestDispatcher("/Home/Write.jsp").forward(request, response);
+			break;
+		case "/MyPage":
+			request.getRequestDispatcher("/Home/SelfHome.jsp").forward(request, response);
+			break;
+		case "/AcHomePage":
+			request.getRequestDispatcher("/Home/AcHome.jsp").forward(request, response);
+			break;
+		case "/NotiPage":
+			NotiDAO dao = new NotiDAO();
+			ArrayList<String> notiList = dao.allNotiList(LoginedID);
+			request.setAttribute("notiList", notiList);
+			request.getRequestDispatcher("/Home/Notice.jsp").forward(request, response);
+			break;
+			
+		// ===========================기능 실행하는 컨트롤러===========================
 		//Nav
 		case "/getSearch":
-			System.out.println(requestURI);
 			useSearch(request,response);
 			break;
 		//Nav
 		case "/goMyPage":
-			System.out.println(requestURI);
-			goMyPage(request,response);
+			goMyPage(request,response,session);
 			break;
 		//Write
 		case "/uploadBoard":
-			System.out.println(requestURI);
 			uploadBoard(request,response);
 			break;
 		//Setting
-		case "/SettingPage":
-			System.out.println(requestURI);
-			showMemberInfo(request,response);
+		case "/deleteAccount" :
+			deleteAccount(request,response,session);
+			break;
+		case "/changePrivateStatus":
+			setPrivateAc(request,response,session);
+			break;
+		
+		//알림확인 기능
+		case "/checkNoti":
+			CheckNoti(request,response,LoginedID);
 			break;
 		//임시
 		case "/Login":
-			System.out.println(requestURI);
-			setLogin(request,response);
+			setLogin(request,response,session);
 			break;
 		case "/Logout":
-			System.out.println(requestURI);
-			setLogout(request,response);
+			setLogout(request,response,session);
 			break;
-		//Setting
-		case "/deleteAccount" :
-			System.out.println(requestURI);
-			deleteAccount(request,response);
-			break;
-		case "/changePrivateStatus":
-			System.out.println(requestURI);
-			setPrivateAc(request,response);
-			break;
+		
+		
 		}
+		
+		
+		session.setAttribute("notiCount", notiCount(request,response,LoginedID));
+		System.out.println("==========service end==========");
 		
 	}
 	
 	//=======================Nav=======================//
-	// 홈으로 가기
-	private void goHome(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException {
-		response.setContentType("text/html;charset=utf-8");
-		response.sendRedirect("/sns/Home/Home.jsp");
-	}
-	
+
 	
 	// 내 페이지 가기
-	private void goMyPage(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		
-		// 한글로 출력 위해서
-		request.setCharacterEncoding("UTF-8");
-		response.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html;charset=utf-8");
-		
+	private void goMyPage(HttpServletRequest request,HttpServletResponse response,HttpSession session)throws ServletException, IOException {
+
 		PrintWriter out = response.getWriter();
 		
 		if((String)session.getAttribute("memberId") != null) {
 			String mid = (String)session.getAttribute("memberId");
 			if(!mid.equals("")) {
-				response.sendRedirect("/sns/Home/SelfHome.jsp");
+				response.sendRedirect("/sns/controller/MyPage");
 			}else {
-				out.println("<script> alert('로그인 해 주십시오');location.href='/sns/controller/goHome'; </script>;");
+				out.println("<script> alert('로그인 해 주십시오');location.href='/sns/controller/LoginPage'; </script>;");
 				out.close();
 			}
 		}else {
-			out.println("<script> alert('로그인 해 주십시오');location.href='/sns/controller/goHome'; </script>;");
+			out.println("<script> alert('로그인 해 주십시오');location.href='/sns/controller/LoginPage'; </script>;");
 			out.close();
 		}
 		
@@ -139,7 +160,7 @@ public class FrontController extends HttpServlet {
 	}
 	
 
-	//=======================Nav=======================//
+	//====================================================//
 	
 	
 	
@@ -148,22 +169,17 @@ public class FrontController extends HttpServlet {
 	private void uploadBoard(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
 
 		request.setCharacterEncoding("UTF-8");
-		//이미지 파일이 저장될 기본위치와, 실제 저장될 파일명
-		// /Users/uk/Coding/Project/JSP/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/sns/ImageFile
 		String ImageFolderPath = request.getServletContext().getRealPath("/ImageFile");
 		String ImageFilePath = "";
 		
 		UploadUtil uploadUtil = UploadUtil.create(request.getServletContext());
 
 		List<Part> parts = (List<Part>) request.getParts();
-//		System.out.println("title : " + request.getParameter("title"));
-//		System.out.println("content : " + request.getParameter("content"));
 		
 		for(Part part : parts) {
 			if(!part.getName().equals("ImageFile")) continue; //ImageFile로 들어온 Part가 아니면 스킵
 			if(part.getSubmittedFileName().equals("")) continue; //업로드 된 파일 이름이 없으면 스킵
 			System.out.println(part.getName());
-			//String fileName = part.getSubmittedFileName();
 			
 			ImageFilePath = uploadUtil.saveFiles(part, uploadUtil.createFilePath());
 			
@@ -174,18 +190,18 @@ public class FrontController extends HttpServlet {
 		}
 		boardDAO dao = new boardDAO();
 		dao.uploadBoard(request, response, ImageFilePath);
+		response.sendRedirect("/sns/controller/HomePage");
 	}
 	
 
 	
 	
-	//=======================Write=======================//
+	//====================================================//
 	
 	
 	//=======================Setting=======================//
-	//setting 페이지에 로그인된 회원 정보 뿌림
-	private void showMemberInfo (HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
-		HttpSession session = request.getSession();
+	//setting 페이지에 로그인된 회원 정보 뿌리고 이동
+	private void showMemberInfo (HttpServletRequest request,HttpServletResponse response,HttpSession session)throws ServletException, IOException{
 		String mid = (String)session.getAttribute("memberId");
 
 		System.out.println(mid);
@@ -196,10 +212,10 @@ public class FrontController extends HttpServlet {
 		RequestDispatcher rd = request.getRequestDispatcher("/Setting/Setting.jsp");
 		rd.forward(request,response);
 	}
+	
 	// 로그인된 회원 계정 삭제관련
-	private void deleteAccount(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
+	private void deleteAccount(HttpServletRequest request,HttpServletResponse response,HttpSession session)throws ServletException, IOException{
 		response.setContentType("text/html; charset=UTF-8");
-		HttpSession session = request.getSession();
 		PrintWriter out = response.getWriter();
 		
 		String mid = (String)session.getAttribute("memberId"); //세션에 로그인되있는 아이디
@@ -213,8 +229,7 @@ public class FrontController extends HttpServlet {
 	}
 	
 	// 계정상태 비공개로 전환(공개="no" 비공개="yes")
-	private void setPrivateAc(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
-		HttpSession session = request.getSession();
+	private void setPrivateAc(HttpServletRequest request,HttpServletResponse response,HttpSession session)throws ServletException, IOException{
 		
 		// 한글로 출력 위해서
 		request.setCharacterEncoding("UTF-8");
@@ -236,26 +251,44 @@ public class FrontController extends HttpServlet {
 	
 	
 	
-	//=======================Setting=======================//
+	//====================================================//
 	
 	//=======================Log=======================//
 	// 테스트용으로 로그인
-	private void setLogin(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
-		HttpSession session = request.getSession();
-
+	private void setLogin(HttpServletRequest request,HttpServletResponse response,HttpSession session)throws ServletException, IOException{
 		response.setContentType("text/html;charset=utf-8");
 		session.setAttribute("memberId", request.getParameter("mid"));
-		response.sendRedirect("/sns/Home/Home.jsp");
+		response.sendRedirect("/sns/controller/HomePage");
 	}
 	
-	private void setLogout(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
-		HttpSession session = request.getSession();
+	private void setLogout(HttpServletRequest request,HttpServletResponse response,HttpSession session)throws ServletException, IOException{
 		session.removeAttribute("memberId");
-		response.sendRedirect("/sns/Login/Login.jsp");
+		response.sendRedirect("/sns/controller/LoginPage");
 	}
 	
-	//=======================Log=======================//
+	//====================================================//
 	
+	//=======================Notice=======================//
+	//알림 갯수 리턴
+	public int notiCount(HttpServletRequest request, HttpServletResponse response,String mid)throws ServletException, IOException {
+		NotiDAO dao =new NotiDAO();
+		ArrayList<String> notiList = dao.isNoti(mid);
+		int notiCount = 0;
+		for(int i=0;i<notiList.size();i++) {
+			System.out.println("알림 : " + notiList.get(i));
+			notiCount++;
+		}
+		return notiCount;
+	}
 	
+	// 알림 확인
+	public void CheckNoti(HttpServletRequest request, HttpServletResponse response,String mid)throws ServletException, IOException {
+
+		NotiDAO dao =new NotiDAO();
+		dao.CheckNoti(mid);
+
+		response.sendRedirect("/sns/controller/NotiPage");
+	}
+	//====================================================//
 	
 }//class end

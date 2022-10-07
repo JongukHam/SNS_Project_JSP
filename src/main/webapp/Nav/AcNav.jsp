@@ -83,18 +83,24 @@
 
 <!-- html here -->
 <nav id="AcNav">
-    <a href="/sns/controller/goHome">StarGram</a>
+    <a href="/sns/controller/HomePage">StarGram</a>
  
     <form method="post" name="searchForm" action="/sns/controller/getSearch">
     	<input type="text" name="searchText" />
     </form>
     <ul >
 <!--알림 -->
-      <li class="n-sideBar"><a href="#"><i class="fa-regular fa-heart"></i></a></li>
+
+      <li class="n-sideBar"><a href="/sns/controller/checkNoti">
+      	<c:choose>
+			<c:when test="${notiCount > 0 }"><i class="fa-solid fa-heart"></i></c:when>
+			<c:when test="${empty notiCount || notiCount==0 }"><i class="fa-regular fa-heart"></i></c:when>
+		</c:choose>
+      </a></li>
 <!--DM-->
       <li class="n-sideBar"><a href="#"><i class="fa-solid fa-paper-plane"></i></a></li>
 <!-- 홈으로 가기 -->
-      <li class="n-sideBar"><a href="/sns/controller/goHome"><i class="fa-solid fa-house"></i></a></li>
+      <li class="n-sideBar"><a href="/sns/controller/HomePage"><i class="fa-solid fa-house"></i></a></li>
 <!--내페이지-->   
       <li class="n-sideBar"><a href="/sns/controller/goMyPage"><i class="fa-solid fa-circle-user"></i></a></li>
 <!--햄버거-->  

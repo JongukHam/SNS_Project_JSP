@@ -16,10 +16,18 @@
 
 	
 	<div class="container" style="text-align:center;">
-		<h1>searched</h1>
-		<c:forEach var="memberDTO" items="${searchedList }">
-			<p><a href="/sns/controller/AcHomePage?id='${memberDTO.getMid() }'">${memberDTO.getMid() }</a></p>
-		</c:forEach>
+		<h1>알림</h1>
+		<c:choose>
+			<c:when test="${empty notiList}">
+			<p>알림없음
+			</c:when>
+			<c:when test="${not empty notiList}">
+			<c:forEach var="i" begin="0" end="${notiList.size()-1 }">
+			<p>${notiList.get(i) }</p>
+			</c:forEach>
+			</c:when>
+		</c:choose>
+		
 	</div>
 	
 	

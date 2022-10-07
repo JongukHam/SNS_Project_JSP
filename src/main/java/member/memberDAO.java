@@ -103,7 +103,7 @@ public class memberDAO extends JDBConnect {
 				
 				if(psmt.executeUpdate()>0) {
 					session.removeAttribute("memberId");
-					delStatus="<script> alert('탈퇴 되었습니다.');location.href='/sns/Login/Login.jsp'; </script>;";
+					delStatus="<script> alert('탈퇴 되었습니다.');location.href='/sns/Login/LoginPage'; </script>;";
 				}
 			}catch(Exception e) {
 				e.printStackTrace();

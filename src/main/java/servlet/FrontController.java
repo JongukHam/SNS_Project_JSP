@@ -18,6 +18,7 @@ import com.mysql.cj.Session;
 import com.oreilly.servlet.MultipartRequest;
 
 import board.boardDAO;
+import comment.commentDAO;
 import notice.NotiDAO;
 
 import java.util.ArrayList;
@@ -47,6 +48,28 @@ public class FrontController extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=utf-8");
 		String LoginedID = (String)session.getAttribute("memberId");
+		
+		//=========================추가 시작
+		// 기능
+		String pageRoute = request.getParameter("pageRoute") == null ? null : request.getParameter("pageRoute");
+		// 보드아이디
+		String bid = request.getParameter("bid") == null ? null : request.getParameter("bid");
+		// 댓글관련 변수
+		String comment = request.getParameter("comment") == null ? null : request.getParameter("comment");
+		// 스크롤위치
+		String scroll = request.getParameter("scroll") == null ? null : request.getParameter("scroll");
+		// 댓글관련 변수
+		String commentDetail = request.getParameter("commentDetail") == null ? null : request.getParameter("commentDetail");
+				
+		String pageMove = null;
+		
+		//=========================추가 끝
+		
+		
+		
+		
+		
+		
 		
 		String requestURI = request.getRequestURI();
 		int lastSlash = requestURI.lastIndexOf("/");
@@ -112,7 +135,43 @@ public class FrontController extends HttpServlet {
 		case "/Login":
 			setLogin(request,response,session);
 			break;
-
+		
+		//=========================추가 시작
+			
+			
+			case "/selectBoard":
+				System.out.println("selectBoard로 왔다");
+				System.out.println("pageRoute : " + pageRoute);
+				System.out.println("bid : " + bid);
+				System.out.println("scroll : " + scroll);
+				System.out.println("comment : " + comment);
+				System.out.println("commentDetail : " + commentDetail);
+				pageMove = selectBoard(request, response, scroll, bid, comment, commentDetail, pageRoute);
+				request.getRequestDispatcher(pageMove).forward(request, response);
+				//
+				break;
+			case "/selectBoardDetail":
+				pageMove = selectBoardDetail(request, response, bid);
+				request.getRequestDispatcher(pageMove).forward(request, response);
+				break;
+			case "/likeWho":
+				pageMove = likeWho(request, response, scroll, bid);
+				request.getRequestDispatcher(pageMove).forward(request, response);
+				break;
+			case "/insertComment":
+				System.out.println("insertComment로 왔다");
+				session = request.getSession();
+				session.setAttribute("scroll", scroll);
+				pageMove = insertComment(request,response,scroll,bid,comment);
+				System.out.println("pageRoute : " + pageRoute);
+				System.out.println("bid : " + bid);
+				System.out.println("scroll : " + scroll);
+				System.out.println("comment : " + comment);
+				System.out.println("commentDetail : " + commentDetail);
+				request.getRequestDispatcher(pageMove).forward(request, response);
+				break;
+			
+		//=========================추가 끝
 		}
 		
 		
@@ -289,5 +348,46 @@ public class FrontController extends HttpServlet {
 		response.sendRedirect("/sns/controller/NotiPage");
 	}
 	//====================================================//
+	
+	
+	//=======================add from saemin START=======================//
+	
+	// Home/Home.jsp - 게시물 조회
+		public String selectBoard(HttpServletRequest request, HttpServletResponse response, String scroll, String bid, String comment, String commentDetail, String pageRoute) throws ServletException, IOException {
+			String pageMove ="";
+			boardDAO dao = new boardDAO();
+			pageMove =dao.selectBoard(request, response, scroll, bid, comment, commentDetail, pageRoute);
+			dao.close();
+			return pageMove;
+		}
+		
+		// Home/Home.jsp - 게시물 상세 조회
+		public String selectBoardDetail(HttpServletRequest request, HttpServletResponse response, String bid) throws ServletException, IOException {
+			String pageMove ="";
+			boardDAO dao = new boardDAO();
+			pageMove =dao.selectBoardDetail(request, response, bid);
+			dao.close();
+			return pageMove;
+		}
+
+		// Home/Home.jsp - 게시물 좋아요 누가누가 조회
+		public String likeWho(HttpServletRequest request, HttpServletResponse response, String scroll, String bid) throws ServletException, IOException {
+			String pageMove ="";
+			boardDAO dao = new boardDAO();
+			pageMove =dao.likeWho(request, response, scroll, bid);
+			dao.close();
+			return pageMove;
+		}
+
+		// Home/Home.jsp - 댓글 등록
+		public String insertComment(HttpServletRequest request, HttpServletResponse response, String scroll, String bid, String comment) throws ServletException, IOException {
+			String pageMove ="";
+			commentDAO dao = new commentDAO();
+			String commentDetail = request.getParameter("commentDetail");
+			pageMove = dao.insertComment(request, response, scroll, bid, comment, commentDetail);
+			dao.close();
+			return pageMove;
+		}
+	//=======================add from saemin END=======================//
 	
 }//class end

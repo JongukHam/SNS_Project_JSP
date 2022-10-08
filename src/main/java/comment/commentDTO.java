@@ -8,6 +8,8 @@ public class commentDTO {
 	private String id;
 	private String likeCount;
 
+	private String pfp;
+	
 	public String getCid() {
 		return cid;
 	}
@@ -38,5 +40,13 @@ public class commentDTO {
 	public void setLikeCount(String likeCount) {
 		this.likeCount = likeCount;
 	}
+	public String getPfp() {
+		return pfp;
+	}
+	public void setPfp(String pfp) {
+		this.pfp = pfp;
+	}
 
+	
+	
 }

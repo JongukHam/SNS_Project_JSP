@@ -10,6 +10,16 @@ public class boardDTO {
     private String photo;
     private String id;
 
+    
+    
+	private String pfp;
+	private String commentCount;
+	
+	// 좋아요 관련
+	private String likeId;
+	private String likeWho;
+    
+    
 public String getBid() {
       return bid;
    }
@@ -52,4 +62,31 @@ public String getBid() {
    public void setId(String id) {
       this.id = id;
    }
+   
+   
+
+   public String getPfp() {
+		return pfp;
+	}
+	public void setPfp(String pfp) {
+		this.pfp = pfp;
+	}
+	public String getCommentCount() {
+		return commentCount;
+	}
+	public void setCommentCount(String commentCount) {
+		this.commentCount = commentCount;
+	}
+	public String getLikeId() {
+		return likeId;
+	}
+	public void setLikeId(String likeId) {
+		this.likeId = likeId;
+	}
+	public String getLikeWho() {
+		return likeWho;
+	}
+	public void setLikeWho(String likeWho) {
+		this.likeWho = likeWho;
+	}
 }

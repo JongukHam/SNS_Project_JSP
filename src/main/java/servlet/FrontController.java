@@ -89,6 +89,13 @@ public class FrontController extends HttpServlet {
 		case "/goMyPage":
 			goMyPage(request,response,session);
 			break;
+		case "/Logout":
+			setLogout(request,response,session);
+			break;
+		//알림확인 기능
+		case "/checkNoti":
+			CheckNoti(request,response,LoginedID);
+			break;
 		//Write
 		case "/uploadBoard":
 			uploadBoard(request,response);
@@ -99,21 +106,13 @@ public class FrontController extends HttpServlet {
 			break;
 		case "/changePrivateStatus":
 			setPrivateAc(request,response,session);
-			break;
+			break;	
 		
-		//알림확인 기능
-		case "/checkNoti":
-			CheckNoti(request,response,LoginedID);
-			break;
 		//임시
 		case "/Login":
 			setLogin(request,response,session);
 			break;
-		case "/Logout":
-			setLogout(request,response,session);
-			break;
-		
-		
+
 		}
 		
 		

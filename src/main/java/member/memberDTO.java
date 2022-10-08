@@ -11,7 +11,7 @@ public class memberDTO {
    private String birth;
    private String follower;
    private String intro;
-   private String isprivate;
+   private String isprivate; // 추가
    
    
    

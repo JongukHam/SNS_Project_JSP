@@ -11,6 +11,7 @@ import board.boardDTO;
 import db.JDBConnect;
 
 public class memberDAO extends JDBConnect {
+	
 	//검색한 문자가 포함된 아이디를 리스트 리턴
 	public ArrayList<memberDTO> getSearch(String searchText){
 		ArrayList<memberDTO> searched = new ArrayList<memberDTO>();
@@ -47,6 +48,7 @@ public class memberDAO extends JDBConnect {
 		}
 		return searched;
 	}
+	
 	
 	// mid를 매개변수로 받아서 db에 조회한 다음 일치하는 아이디가 있다면 dto에 셋팅하고 dto리턴
 	public memberDTO getMemberInfo(HttpServletRequest request,HttpServletResponse response, String mid) {
@@ -88,6 +90,7 @@ public class memberDAO extends JDBConnect {
 		return memberInfo;
 	}
 	
+	
 	// 데이터베이스에서 멤버 찾아서 삭제
 	public String deleteAccount(HttpServletRequest request,HttpServletResponse response, String mid, String password,HttpSession session) {
 		memberDTO dto = getMemberInfo(request,response,mid);
@@ -115,6 +118,8 @@ public class memberDAO extends JDBConnect {
 		}
 		return delStatus;
 	}
+	
+	
 	//공개범위 변경 공개 비공개
 	public String changePrivateState(HttpServletRequest request,HttpServletResponse response,memberDTO dto) {
 		String changeStatus="";

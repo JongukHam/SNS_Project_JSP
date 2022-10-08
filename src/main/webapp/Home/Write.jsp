@@ -61,14 +61,12 @@
 	<div class="writeForm">
 		<div class="texts">
 			<p>ID
-			<p>Title
 			<p class="i2">content
 			<p>Image
 		</div>
 		<div class="writeHere">
 			<p>&nbsp;${memberId }
 			<form name="writeForm" method="post" action="/sns/controller/uploadBoard" enctype="multipart/form-data">
-				<input class="i1" type="text" name="title" maxlength='50' placeholder="제목을 입력해 주세요"/>
 				<textarea class="i2" name="content" maxlength='500' placeholder="내용을 입력해 주세요"></textarea>
 				<input class="i3" type="file" name="ImageFile" />
 				<input class="i4" type="submit" value="등록" />

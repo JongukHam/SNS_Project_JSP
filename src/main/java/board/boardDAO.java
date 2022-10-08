@@ -28,14 +28,13 @@ public class boardDAO extends JDBConnect {
 	// 데이터베이스에 게시글 업로드
 	public void uploadBoard(HttpServletRequest request,HttpServletResponse response, String ImageFilePath) {
 		boardDTO dto = setBoard(request,response,ImageFilePath);
-		String uploadSql = "insert into boardtbl(id,title,content,photo) value(?,?,?,?)";
+		String uploadSql = "insert into boardtbl(id,content,photo) value(?,?,?)";
 		
 		try {
 			psmt = con.prepareStatement(uploadSql);
 			psmt.setString(1, dto.getId());
-			psmt.setString(2, dto.getTitle());
-			psmt.setString(3, dto.getContent());
-			psmt.setString(4, dto.getPhoto());
+			psmt.setString(2, dto.getContent());
+			psmt.setString(3, dto.getPhoto());
 			psmt.executeUpdate();
 		}catch(Exception e) {
 			e.printStackTrace();

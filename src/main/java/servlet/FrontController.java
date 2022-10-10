@@ -85,6 +85,7 @@ public class FrontController extends HttpServlet {
 		switch(requestURI) {
 		// ===========================페이지로 보내는 컨트롤러===========================
 		case "/HomePage":
+			session.removeAttribute("scroll");
 			request.getRequestDispatcher("/Home/Home.jsp").forward(request, response);
 			break;
 		case "/LoginPage":

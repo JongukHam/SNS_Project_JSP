@@ -5,7 +5,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<jsp:include page="../CssLink/CssLink.jsp" flush="true" />
 <meta charset="UTF-8">
 <title>SettingPage</title>
 <style>

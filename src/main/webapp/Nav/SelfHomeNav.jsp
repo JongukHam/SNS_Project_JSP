@@ -109,7 +109,20 @@
 <!-- 로그아웃 -->
       <li class="n-sideBar"><a href="#" data-toggle="modal" data-target="#logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
 <!--햄버거-->  
-      <li class="sideBar"><a href="#"><i class="fa-solid fa-bars"></i></a></li>
+      <li class="sideBar">
+      	<div class="dropdown">
+  			<a class="btn btn-primary dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+   			 	<i class="fa-solid fa-bars"></i>
+  			</a>
+		  <div class="dropdown-menu">
+		    <a class="dropdown-item" href="#"><i class="fa-solid fa-paper-plane"></i>DM</a>
+		    <a class="dropdown-item" href="/sns/controller/WritePage"><i class="fa-solid fa-pen"></i>Write</a>
+		    <a class="dropdown-item" href="/sns/controller/HomePage"><i class="fa-solid fa-house"></i>Home</a>
+		    <a class="dropdown-item" href="/sns/controller/SettingPage"><i class="fa-solid fa-gear"></i>Setting</a>
+		    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logout"><i class="fa-solid fa-arrow-right-from-bracket"></i>LogOut</a>
+		  </div>
+		</div>
+		</li>
     </ul>
 
   </nav>

@@ -85,7 +85,7 @@
 		<p>─────────────────────────────────────────────────────────────
         <c:forEach var="listBoard" items="${listBoard}" varStatus="status">
         	<p><h3>게시글 번호 ${listBoard.bid}</h3>
-		    <p>작성자 프사 <a href="#">${listBoard.id}</a> 작성자 아이디 <a href="#">${listBoard.id}</a>
+		    <p>작성자 프사 <a href="/sns/controller/AcHomePage?m2id=${listBoard.id}">${listBoard.id}</a> 작성자 아이디 <a href="/sns/controller/AcHomePage?m2id=${listBoard.id}">${listBoard.id}</a>
 		    <p style="height: 100px;">게시글 사진 ${listBoard.photo}
 			<p>
 				<button class="btn btn-secondary" onclick="scrollStop('likeWho', ${listBoard.bid})">좋아요</button>

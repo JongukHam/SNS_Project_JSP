@@ -1,10 +1,13 @@
 package board;
 
 import db.JDBConnect;
+import member.memberDTO;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,7 +54,7 @@ public class boardDAO extends JDBConnect {
 	
 	//=======================add from saemin START=======================//
 	// Home/Home - 게시물 조회
-		public String selectBoard(HttpServletRequest request, HttpServletResponse response, String scroll, String bid, String comment, String commentDetail, String pageRoute) {
+		public String selectBoard(HttpServletRequest request, HttpServletResponse response, String scroll, String bid, String comment, String commentDetail, String pageRoute, String m2id) {
 			String pageMove = "/Home/Home.jsp";
 			ArrayList<boardDTO> listBoard = new ArrayList<boardDTO>();
 			ArrayList<commentDTO> listComment = new ArrayList<commentDTO>();
@@ -59,10 +62,18 @@ public class boardDAO extends JDBConnect {
 			
 			ResultSet rs2;
 	        try {
+	        	
 	        	String query = "SELECT A.bid, A.content, A.likecount, A.birth, A.id, A.photo, B.pfp, B.mid\r\n"
 	        			+ ", (SELECT count(content) FROM commenttbl C WHERE A.bid = C.id) as '댓글 갯수'\r\n"
 	        			+ ", A.likeWho\r\n"
 	        			+ "FROM boardtbl A, membertbl B, commenttbl C GROUP BY A.bid ORDER BY birth DESC";
+	        	if(m2id!=null) {
+	        		query = "SELECT A.bid, A.content, A.likecount, A.birth, A.id, A.photo, B.pfp, B.mid\r\n"
+		        			+ ", (SELECT count(content) FROM commenttbl C WHERE A.bid = C.id) as '댓글 갯수'\r\n"
+		        			+ ", A.likeWho\r\n"
+		        			+ "FROM boardtbl A, membertbl B, commenttbl C where A.id="+m2id+" GROUP BY A.bid ORDER BY birth DESC";
+	        		pageMove="/Home/AcHome.jsp";
+	        	}
 	            stmt = con.createStatement();
 	            rs = stmt.executeQuery(query);
 	            
@@ -414,6 +425,78 @@ public class boardDAO extends JDBConnect {
 		
 	
 	//=======================add from saemin END=======================//
+		
+	//=======================add from hyunjun START=======================//
+		public String selectAc(HttpServletRequest req, HttpServletResponse res, String m2id, String index, String memberId){      
+			String pageMove = "/Home/AcHome.jsp";
+			
+			if(memberId!=null) {
+				pageMove="/Home/SelfHome.jsp";
+			}		
+			if(index!=null) {
+				pageMove="/board/AcContent.jsp";
+			}
+			
+			String sql = "select * from boardtbl where id=?";
+	        String sql2 = "select * from membertbl where mid=?";
+	        
+	        List<boardDTO> boardlist=new ArrayList<boardDTO>();
+	        memberDTO memberlist=new memberDTO();
+	        
+	        ResultSet rs2 = null; 
+	        
+		    PreparedStatement pstmt=null;
+		    PreparedStatement pstmt2=null;
+	        try {
+	    	    pstmt= con.prepareStatement(sql);
+				if(memberId!=null) {
+					pstmt.setString(1,memberId);
+				} else {pstmt.setString(1,m2id);}
+	    	    rs = pstmt.executeQuery();
+	    	    
+	    	    pstmt2= con.prepareStatement(sql2);    
+	    	    if(memberId!=null) {
+					pstmt2.setString(1,memberId);
+				} else {pstmt2.setString(1,m2id);}	    	    
+	    	    rs2 = pstmt2.executeQuery();
+	    	    
+	    	    while(rs.next()) {
+	    	    	boardDTO bdto=new boardDTO();
+	    	    	bdto.setBid(rs.getString(1));	    	    	
+	    	    	bdto.setContent(rs.getString(2));
+	    	    	bdto.setBirth(rs.getString(3));
+	    	    	bdto.setLikeCount(rs.getString(4));
+	    	    	bdto.setPhoto(rs.getString(5));
+	    	    	bdto.setId(rs.getString(6));   
+	    	    	bdto.setLikeWho(rs.getString(7));
+	    	    	boardlist.add(bdto);
+	    	    }
+	    	    while(rs2.next()) {	    	    	
+	    	    	memberlist.setMid(rs2.getString(1));
+	    	    	memberlist.setPw(rs2.getString(2));
+	    	    	memberlist.setEmail(rs2.getString(3));
+	    	    	memberlist.setPfp(rs2.getString(4));
+	    	    	memberlist.setPhone(rs2.getString(5));
+	    	    	memberlist.setName(rs2.getString(6));
+	    	    	memberlist.setBirth(rs2.getString(7));
+	    	    	memberlist.setIntro(rs2.getString(8));
+	    	    	memberlist.setFollower(rs2.getString(9));	
+	    	    	memberlist.setIsprivate(rs2.getString(10));
+	    	    }
+	    	    System.out.println("보드,멤버 리스트 생성");
+	    	}
+	        catch (Exception e) {
+	            System.out.println("보드,멤버 리스트 구하는 중 예외 발생");
+	            e.printStackTrace();
+	        }   
+	        req.setAttribute("len", boardlist.size());
+	        req.setAttribute("boardlist", boardlist);	        
+	        req.setAttribute("memberlist", memberlist);  
+	        System.out.println("보드,멤버 리스트 생성");
+	        
+	        return pageMove;
+	    }
+	//=======================add from hyunjun END=======================//
 	
 	
 }

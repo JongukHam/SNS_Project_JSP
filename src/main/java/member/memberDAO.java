@@ -1,11 +1,19 @@
 package member;
 
+import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
 import board.boardDTO;
 import db.JDBConnect;
@@ -167,6 +175,69 @@ public class memberDAO extends JDBConnect {
 		return changeStatus;
 	}
 
+	
+
+	//계정정보 수정
+		public void Aedit(HttpServletRequest request, HttpServletResponse response, String mid){            
+			String sql = "update membertbl set pw=?,email=?,phone=?,name=?,birth=? where mid=?";
+	        
+	        ResultSet rs = null;    	  
+		    PreparedStatement pstmt=null;
+	        try {
+				pstmt= con.prepareStatement(sql);  				
+				pstmt.setString(1,request.getParameter("pw"));
+				pstmt.setString(2,request.getParameter("email"));
+				pstmt.setString(3,request.getParameter("phone"));
+				pstmt.setString(4,request.getParameter("name"));
+				pstmt.setString(5,request.getParameter("birth"));
+				pstmt.setString(6,mid);
+				pstmt.executeUpdate();
+				System.out.println("계정정보 수정");
+	        }
+	        catch (Exception e) {
+	            System.out.println("계정정보 수정하는 중 예외 발생");
+	            e.printStackTrace();
+	        }      	        
+			
+	    }
+		
+	//프로필 수정(소개, 사진)
+	    public void Pedit(HttpServletRequest request, HttpServletResponse response, String mid) throws IOException {	    
+	    	
+	    	try{
+	    		String realFolder= request.getSession().getServletContext().getRealPath("/upload");//올리는 곳의 경로
+	        	MultipartRequest multi= new MultipartRequest(request, realFolder, 5*1024*1024, 
+	        			"utf-8", new DefaultFileRenamePolicy()); //product_set에서 넘겨받은 정보 담고있는 객체//괄호안은 
+
+	        	Enumeration files = multi.getFileNames();		
+	        	String file = (String) files.nextElement();
+	        	String filename = multi.getFilesystemName(file); //올린 이미지 파일이름
+	        	
+	        	String intro=multi.getParameter("intro");
+
+	        	
+	        	
+	        	PreparedStatement pstmt=null;   
+	        	String sql=null;
+	        	
+	    		if(intro!=null){
+		    		sql = "update membertbl set pfp=?,intro=? where mid=?";	  
+		    		pstmt= con.prepareStatement(sql);	
+		    		pstmt.setString(1,"../upload/"+filename); 
+					pstmt.setString(2,intro);
+					pstmt.setString(3,mid);
+		    		pstmt.executeUpdate();
+	    		}
+	    		System.out.println(realFolder+filename);
+	    		System.out.println("프로필 수정");
+
+	    	} catch(SQLException ex){
+	    		System.out.println("프로필 수정 실패<br>");
+	    		System.out.println("SQLException : " + ex.getMessage());
+	    	}     	
+	    		
+	    }
+	   
 	
 	
 

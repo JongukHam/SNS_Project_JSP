@@ -60,7 +60,13 @@ public class FrontController extends HttpServlet {
 		String scroll = request.getParameter("scroll") == null ? null : request.getParameter("scroll");
 		// 댓글관련 변수
 		String commentDetail = request.getParameter("commentDetail") == null ? null : request.getParameter("commentDetail");
-				
+		//acHome 관련 변수
+		String m2id=request.getParameter("m2id")==null? null : request.getParameter("m2id");
+		//acContent 관련 변수
+		String index=request.getParameter("index")==null? null : request.getParameter("index");
+		//selfHome 관련 변수
+		String memberId=request.getParameter("memberId")==null? null : request.getParameter("memberId");
+		
 		String pageMove = null;
 		
 		//=========================추가 끝
@@ -93,9 +99,22 @@ public class FrontController extends HttpServlet {
 		case "/MyPage":
 			request.getRequestDispatcher("/Home/SelfHome.jsp").forward(request, response);
 			break;
+		case "/ProfileEditPage":
+			request.getRequestDispatcher("/Setting/ProfileEdit.jsp").forward(request, response);
+			break;	
+		case "/AcEditPage":
+			request.getRequestDispatcher("/Setting/AcEdit.jsp").forward(request, response);
+			break;	
 		case "/AcHomePage":
 			request.getRequestDispatcher("/Home/AcHome.jsp").forward(request, response);
 			break;
+		case "/AcContentPage":
+			request.getRequestDispatcher("/board/AcContent.jsp").forward(request, response);
+			break;
+		case "/SelfHomePage":
+			request.getRequestDispatcher("/Home/SelfHome.jsp").forward(request, response);
+			break;
+			
 		case "/NotiPage":
 			NotiDAO dao = new NotiDAO();
 			ArrayList<String> notiList = dao.allNotiList(LoginedID);
@@ -130,6 +149,14 @@ public class FrontController extends HttpServlet {
 		case "/changePrivateStatus":
 			setPrivateAc(request,response,session);
 			break;	
+		case "/Aedit":
+			Aedit(request,response,session);
+			break;	
+		case "/Pedit":
+			Pedit(request,response,session);
+			break;	
+			
+			
 		
 		//임시
 		case "/Login":
@@ -146,7 +173,8 @@ public class FrontController extends HttpServlet {
 				System.out.println("scroll : " + scroll);
 				System.out.println("comment : " + comment);
 				System.out.println("commentDetail : " + commentDetail);
-				pageMove = selectBoard(request, response, scroll, bid, comment, commentDetail, pageRoute);
+				System.out.println("m2id " + m2id);
+				pageMove = selectBoard(request, response, scroll, bid, comment, commentDetail, pageRoute, m2id);
 				request.getRequestDispatcher(pageMove).forward(request, response);
 				//
 				break;
@@ -170,6 +198,13 @@ public class FrontController extends HttpServlet {
 				System.out.println("commentDetail : " + commentDetail);
 				request.getRequestDispatcher(pageMove).forward(request, response);
 				break;
+				
+			case "/selectAc":
+				System.out.println("selectAc로 왔다");
+				System.out.println("m2id " + m2id);
+				pageMove = selectAc(request, response, m2id, index, memberId);
+				request.getRequestDispatcher(pageMove).forward(request, response);
+				//
 			
 		//=========================추가 끝
 		}
@@ -307,6 +342,28 @@ public class FrontController extends HttpServlet {
 		out.close();
 	}
 	
+	private void Aedit (HttpServletRequest request,HttpServletResponse response,HttpSession session)throws ServletException, IOException{
+		String mid = (String)session.getAttribute("memberId");
+
+		System.out.println(mid);
+		memberDAO dao = new memberDAO();
+		dao.Aedit(request, response, mid);
+		
+		RequestDispatcher rd = request.getRequestDispatcher("/Home/SelfHome.jsp");
+		rd.forward(request,response);
+	}
+	
+	private void Pedit (HttpServletRequest request,HttpServletResponse response,HttpSession session)throws ServletException, IOException{
+		String mid = (String)session.getAttribute("memberId");
+
+		System.out.println(mid);
+		memberDAO dao = new memberDAO();
+		dao.Pedit(request, response, mid);
+		
+		RequestDispatcher rd = request.getRequestDispatcher("/Home/SelfHome.jsp");
+		rd.forward(request,response);
+	}
+	
 	
 	
 	//====================================================//
@@ -353,10 +410,11 @@ public class FrontController extends HttpServlet {
 	//=======================add from saemin START=======================//
 	
 	// Home/Home.jsp - 게시물 조회
-		public String selectBoard(HttpServletRequest request, HttpServletResponse response, String scroll, String bid, String comment, String commentDetail, String pageRoute) throws ServletException, IOException {
+		public String selectBoard(HttpServletRequest request, HttpServletResponse response, 
+		String scroll, String bid, String comment, String commentDetail, String pageRoute, String m2id) throws ServletException, IOException {
 			String pageMove ="";
-			boardDAO dao = new boardDAO();
-			pageMove =dao.selectBoard(request, response, scroll, bid, comment, commentDetail, pageRoute);
+			boardDAO dao = new boardDAO(); 
+			pageMove =dao.selectBoard(request, response, scroll, bid, comment, commentDetail, pageRoute, m2id);
 			dao.close();
 			return pageMove;
 		}
@@ -389,5 +447,16 @@ public class FrontController extends HttpServlet {
 			return pageMove;
 		}
 	//=======================add from saemin END=======================//
-	
+		
+		
+	//=======================add from hyunjun START=======================//
+		public String selectAc(HttpServletRequest request, HttpServletResponse response, String m2id, String index, String memberId) throws ServletException, IOException {
+			String pageMove ="";
+			boardDAO dao = new boardDAO(); 
+			pageMove =dao.selectAc(request, response, m2id, index, memberId);
+			dao.close();
+			return pageMove;
+		}
+		
+	//=======================add from hyunjun END=======================//
 }//class end

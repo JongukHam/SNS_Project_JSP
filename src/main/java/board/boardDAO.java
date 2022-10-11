@@ -6,6 +6,7 @@ import member.memberDTO;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +54,31 @@ public class boardDAO extends JDBConnect {
 		}
 	}
 	
+	//boardID를 가지고 보드의 게시물 가져와서 DTO저장하는 메서드
+	public boardDTO getBoard(String bid) {
+		String sql = "select * from board where bid=" + bid;
+		boardDTO dto = new boardDTO();
+		try {
+			stmt = con.createStatement();
+			rs = stmt.executeQuery(sql);
+			if(rs.next()) {
+				dto.setBid(rs.getString("bid"));
+				SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
+				dto.setBirth(sd.format(rs.getDate("birth")));
+				dto.setContent(rs.getString("content"));
+				dto.setLikeCount(Integer.toString(rs.getInt("likecount")));
+				dto.setPhoto(rs.getString("photo"));
+				dto.setId(rs.getString("id"));
+				dto.setLikeWho(rs.getString("likeWho"));
+			}
+			
+		}catch(Exception e) {
+			System.out.println("getBoard Failed");
+			e.printStackTrace();
+		}
+		return dto;
+		
+	}
 	
 	//=======================add from saemin START=======================//
 	// Home/Home - 게시물 조회
@@ -297,9 +323,10 @@ public class boardDAO extends JDBConnect {
 	        HttpSession session = request.getSession();
 	        String memberId = (String)session.getAttribute("memberId");
 	        
+	        String getId=""; //종욱추가
 	        
 	        try {
-	        	String query = "SELECT likeWho FROM boardtbl WHERE bid=?";
+	        	String query = "SELECT likeWho,id FROM boardtbl WHERE bid=?";
 	        	
 	            psmt = con.prepareStatement(query);
 	        	psmt.setString(1, bid);
@@ -308,7 +335,7 @@ public class boardDAO extends JDBConnect {
 	        	// null만 아니면 if 들어감(사실상 무조건 들어감. 왜 이렇게 해놨지?)
 	        	if (rs.next()) {
 					String db = rs.getString(1);
-					
+					getId = rs.getString("id"); // 종욱추가
 					// 좋아요 아무도 안눌렀으면 첫 좋아요
 					if (db.equals("")) {
 						try {
@@ -326,6 +353,18 @@ public class boardDAO extends JDBConnect {
 				        	psmt = con.prepareStatement(query);
 				        	psmt.setString(1, bid);
 				        	psmt.executeUpdate();
+				        	
+				        	// 종욱 알림 추가
+				        	psmt.close();
+							rs.close();
+							String notice = String.format("%s님이 %s게시글에 좋아요를 눌렀습니다",memberId,bid);
+				        	query = "insert into noti(getid,putid,notice,created_at) values(?,?,?,now())";	
+				        	psmt = con.prepareStatement(query);
+							psmt.setString(1, getId);
+							psmt.setString(2, memberId);
+							psmt.setString(3, notice);
+							psmt.executeUpdate();
+							// 종욱 추가 끝
 				        	
 							System.out.println(memberId + "가 " + bid + "번 게시글 첫 좋아요 성공");
 						} 
@@ -385,6 +424,17 @@ public class boardDAO extends JDBConnect {
 					        	psmt = con.prepareStatement(query);
 					        	psmt.setString(1, bid);
 					        	psmt.executeUpdate();
+					        	
+					        	// 종욱 알림 추가
+					        	psmt.close();
+								rs.close();
+								String notice = String.format("%s님이 %s게시글에 좋아요를 눌렀습니다",memberId,bid);
+					        	query = "delete from noti where notice=?";
+					        	psmt = con.prepareStatement(query);
+								psmt.setString(1, notice);
+								psmt.executeUpdate();
+								// 종욱 추가 끝
+					        	
 					        	System.out.println(memberId + "가 " + bid + "번 게시글 좋아요 취소 성공");
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -410,6 +460,18 @@ public class boardDAO extends JDBConnect {
 					        	psmt.setString(1, bid);
 					        	psmt.executeUpdate();
 					        	
+					        	// 종욱 알림 추가
+					        	psmt.close();
+								rs.close();
+								String notice = String.format("%s님이 %s게시글에 좋아요를 눌렀습니다",memberId,bid);
+					        	query = "insert into noti(getid,putid,notice,created_at) values(?,?,?,now())";	
+					        	psmt = con.prepareStatement(query);
+								psmt.setString(1, getId);
+								psmt.setString(2, memberId);
+								psmt.setString(3, notice);
+								psmt.executeUpdate();
+								// 종욱 추가 끝
+								
 					        	System.out.println(memberId + "가 " + bid + "번 게시글 좋아요 성공");
 							} catch (Exception e) {
 								e.printStackTrace();

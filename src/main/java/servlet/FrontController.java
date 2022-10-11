@@ -18,6 +18,7 @@ import com.mysql.cj.Session;
 import com.oreilly.servlet.MultipartRequest;
 
 import board.boardDAO;
+import board.boardDTO;
 import comment.commentDAO;
 import notice.NotiDAO;
 

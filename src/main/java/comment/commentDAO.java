@@ -17,15 +17,39 @@ public class commentDAO extends JDBConnect {
 			HttpSession session = request.getSession();
 			session.setAttribute("boardCount", boardCount);
 			String memberId = (String)session.getAttribute("memberId");
-	        
+			String getId=""; //종욱추가
 			String pageMove="";
 	    	try {
-	        	String query = "INSERT INTO commenttbl(cid, content, id) VALUES(?, ?, ?)";
+	    		//종욱 추가
+	    		String query = "select id from boardtbl where bid=?";
+	    		psmt = con.prepareStatement(query);
+	    		psmt.setString(1, bid);
+	    		rs = psmt.executeQuery();
+	    		
+	    		if(rs.next()) {getId = rs.getString("id");}
+	    		psmt.close();
+	    		rs.close();
+	    		//
+	    		
+	        	query = "INSERT INTO commenttbl(cid, content, id) VALUES(?, ?, ?)";
 	            psmt = con.prepareStatement(query);
 	        	psmt.setString(1, memberId);
 	        	psmt.setString(2, comment);
 	        	psmt.setString(3, bid);
 	        	psmt.executeUpdate();
+	        	psmt.close();
+	        	
+	        	//종욱 추가
+	        	String notice = String.format("%s님이 %s게시글에 댓글을 달았습니다",memberId,bid);
+	        	query = "insert into noti(getid,putid,notice,created_at) values(?,?,?,now())";	
+	        	psmt = con.prepareStatement(query);
+	        	psmt.setString(1, getId);
+	        	psmt.setString(2, memberId);
+	        	psmt.setString(3, notice);
+	        	psmt.executeUpdate();
+	        	//
+	        	
+	        	
 	            System.out.println(memberId + "가 " + bid + "번 게시글에 \"" + comment + "\" 내용으로 작성 성공");
 	        }
 	        catch (Exception e) {

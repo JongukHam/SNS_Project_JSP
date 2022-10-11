@@ -275,6 +275,18 @@ public class memberDAO extends JDBConnect {
 			        	psmt.setString(1, mid);
 			        	psmt.executeUpdate();
 			        	
+			        	//종욱 알림 추가
+			        	psmt.close();
+			        	rs.close();
+			        	String notice = String.format("%s님이 나를 팔로우하기 시작했습니다",memberId);
+			        	query = "insert into noti(getid,putid,notice,created_at) values(?,?,?,now())";	
+			        	psmt = con.prepareStatement(query);
+			        	psmt.setString(1, mid);
+			        	psmt.setString(2, memberId);
+			        	psmt.setString(3, notice);
+			        	psmt.executeUpdate();
+			        	//
+			        	
 						System.out.println(memberId + "가 " + mid + "님 첫 팔로우 성공");
 					} 
 					catch (Exception e) {
@@ -333,6 +345,17 @@ public class memberDAO extends JDBConnect {
 				        	psmt = con.prepareStatement(query);
 				        	psmt.setString(1, mid);
 				        	psmt.executeUpdate();
+				        	
+				        	//종욱 알림 추가
+				        	psmt.close();
+				        	rs.close();
+				        	String notice = String.format("%s님이 나를 팔로우하기 시작했습니다",memberId);
+				        	query = "delete from noti where notice=?";
+				        	psmt = con.prepareStatement(query);
+				        	psmt.setString(1, notice);
+				        	psmt.executeUpdate();
+				        	//
+				        	
 				        	System.out.println(memberId + "가 " + mid + "님 팔로우 취소 성공");
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -357,6 +380,18 @@ public class memberDAO extends JDBConnect {
 				        	psmt = con.prepareStatement(query);
 				        	psmt.setString(1, mid);
 				        	psmt.executeUpdate();
+				        	
+				        	//종욱 알림 추가
+				        	psmt.close();
+				        	rs.close();
+				        	String notice = String.format("%s님이 나를 팔로우하기 시작했습니다",memberId);
+				        	query = "insert into noti(getid,putid,notice,created_at) values(?,?,?,now())";	
+				        	psmt = con.prepareStatement(query);
+				        	psmt.setString(1, mid);
+				        	psmt.setString(2, memberId);
+				        	psmt.setString(3, notice);
+				        	psmt.executeUpdate();
+				        	//
 				        	
 				        	System.out.println(memberId + "가 " + mid + "님 팔로우 성공");
 						} catch (Exception e) {

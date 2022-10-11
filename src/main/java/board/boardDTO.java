@@ -3,7 +3,7 @@ package board;
 public class boardDTO {   
 	
     private String bid;
-    private String title;
+    private String title; //안씀
     private String content;
     private String birth;
     private String likeCount;

@@ -56,8 +56,6 @@ public class FrontController extends HttpServlet {
 		String bid = request.getParameter("bid") == null ? null : request.getParameter("bid");
 		// 댓글관련 변수
 		String comment = request.getParameter("comment") == null ? null : request.getParameter("comment");
-		// 스크롤위치
-		String scroll = request.getParameter("scroll") == null ? null : request.getParameter("scroll");
 		// 댓글관련 변수
 		String commentDetail = request.getParameter("commentDetail") == null ? null : request.getParameter("commentDetail");
 		//acHome 관련 변수
@@ -66,7 +64,10 @@ public class FrontController extends HttpServlet {
 		String index=request.getParameter("index")==null? null : request.getParameter("index");
 		//selfHome 관련 변수
 		String memberId=request.getParameter("memberId")==null? null : request.getParameter("memberId");
-		
+		// 버튼 눌렀을때 몇번째 게시물인지
+		String boardCount = request.getParameter("boardCount") == null ? null : request.getParameter("boardCount");
+		// AcHome에서 왔을때 누구를(mid) 팔로우 할건지 지정하기위
+		String mid = request.getParameter("mid") == null ? null : request.getParameter("mid");
 		String pageMove = null;
 		
 		//=========================추가 끝
@@ -167,46 +168,33 @@ public class FrontController extends HttpServlet {
 		//=========================추가 시작
 			
 			
-			case "/selectBoard":
-				System.out.println("selectBoard로 왔다");
-				System.out.println("pageRoute : " + pageRoute);
-				System.out.println("bid : " + bid);
-				System.out.println("scroll : " + scroll);
-				System.out.println("comment : " + comment);
-				System.out.println("commentDetail : " + commentDetail);
-				System.out.println("m2id " + m2id);
-				pageMove = selectBoard(request, response, scroll, bid, comment, commentDetail, pageRoute, m2id);
-				request.getRequestDispatcher(pageMove).forward(request, response);
-				//
-				break;
-			case "/selectBoardDetail":
-				pageMove = selectBoardDetail(request, response, bid);
-				request.getRequestDispatcher(pageMove).forward(request, response);
-				break;
-			case "/likeWho":
-				pageMove = likeWho(request, response, scroll, bid);
-				request.getRequestDispatcher(pageMove).forward(request, response);
-				break;
-			case "/insertComment":
-				System.out.println("insertComment로 왔다");
-				session = request.getSession();
-				session.setAttribute("scroll", scroll);
-				pageMove = insertComment(request,response,scroll,bid,comment);
-				System.out.println("pageRoute : " + pageRoute);
-				System.out.println("bid : " + bid);
-				System.out.println("scroll : " + scroll);
-				System.out.println("comment : " + comment);
-				System.out.println("commentDetail : " + commentDetail);
-				request.getRequestDispatcher(pageMove).forward(request, response);
-				break;
-				
-			case "/selectAc":
-				System.out.println("selectAc로 왔다");
-				System.out.println("m2id " + m2id);
-				pageMove = selectAc(request, response, m2id, index, memberId);
-				request.getRequestDispatcher(pageMove).forward(request, response);
-				//
-			
+		case "/selectBoard":
+			pageMove = selectBoard(request, response, bid, comment, commentDetail, pageRoute, m2id);
+			request.getRequestDispatcher(pageMove).forward(request, response);
+			//
+			break;
+		case "/selectBoardDetail":
+			pageMove = selectBoardDetail(request, response, bid);
+			request.getRequestDispatcher(pageMove).forward(request, response);
+			break;
+		case "/likeWho":
+			pageMove = likeWho(request, response, bid, boardCount);
+			request.getRequestDispatcher(pageMove).forward(request, response);
+			break;
+		case "/insertComment":
+			session = request.getSession();
+			pageMove = insertComment(request,response,bid,comment, boardCount);
+			request.getRequestDispatcher(pageMove).forward(request, response);
+			break;
+		case "/selectAc":
+			pageMove = selectAc(request, response, m2id, index, memberId);
+			request.getRequestDispatcher(pageMove).forward(request, response);
+			break;
+		case "/follow":
+			System.out.println(0);
+			pageMove = follow(request, response, mid);
+			request.getRequestDispatcher(pageMove).forward(request, response);	
+			break;
 		//=========================추가 끝
 		}
 		
@@ -261,31 +249,32 @@ public class FrontController extends HttpServlet {
 	//=======================Write=======================//
 	// 이미지 저장하고 ImageFile 아래 경로 구함
 	private void uploadBoard(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
+	      boardDAO dao = new boardDAO();
+	      request.setCharacterEncoding("UTF-8");
+	      String ImageFolderPath = request.getServletContext().getRealPath("/ImageFile");
+	      String ImageFilePath = "";
+	      
+	      UploadUtil uploadUtil = UploadUtil.create(request.getServletContext());
 
-		request.setCharacterEncoding("UTF-8");
-		String ImageFolderPath = request.getServletContext().getRealPath("/ImageFile");
-		String ImageFilePath = "";
-		
-		UploadUtil uploadUtil = UploadUtil.create(request.getServletContext());
+	      List<Part> parts = (List<Part>) request.getParts();
+	      
+	      for(Part part : parts) {
+	         if(!part.getName().equals("ImageFile")) continue; //ImageFile로 들어온 Part가 아니면 스킵
+	         if(part.getSubmittedFileName().equals("")) continue; //업로드 된 파일 이름이 없으면 스킵
+	         System.out.println(part.getName());
+	         
+	         
+	         ImageFilePath = ImageFilePath +","+uploadUtil.saveFiles(part, uploadUtil.createFilePath());
 
-		List<Part> parts = (List<Part>) request.getParts();
-		
-		for(Part part : parts) {
-			if(!part.getName().equals("ImageFile")) continue; //ImageFile로 들어온 Part가 아니면 스킵
-			if(part.getSubmittedFileName().equals("")) continue; //업로드 된 파일 이름이 없으면 스킵
-			System.out.println(part.getName());
-			
-			ImageFilePath = uploadUtil.saveFiles(part, uploadUtil.createFilePath());
-			
-			System.out.println("=========saveImage=========");
-			System.out.println("ImageFolderPath : " + ImageFolderPath);
-			System.out.println("ImageFilePath : " + ImageFilePath);
-			System.out.println("=========saveImage=========");
-		}
-		boardDAO dao = new boardDAO();
-		dao.uploadBoard(request, response, ImageFilePath);
-		response.sendRedirect("/sns/controller/HomePage");
-	}
+	         System.out.println("=========saveImage=========");
+	         System.out.println("ImageFolderPath : " + ImageFolderPath);
+	         System.out.println("ImageFilePath : " + ImageFilePath);
+	         System.out.println("=========saveImage=========");
+	      }
+	      ImageFilePath = ImageFilePath.substring(1);
+	      dao.uploadBoard(request, response, ImageFilePath);
+	      response.sendRedirect("/sns/controller/HomePage");
+	   }
 	
 
 	
@@ -298,7 +287,6 @@ public class FrontController extends HttpServlet {
 	private void showMemberInfo (HttpServletRequest request,HttpServletResponse response,HttpSession session)throws ServletException, IOException{
 		String mid = (String)session.getAttribute("memberId");
 
-		System.out.println(mid);
 		memberDAO dao = new memberDAO();
 		memberDTO dto = dao.getMemberInfo(request, response, mid);
 		request.setAttribute("memberInfo", dto);
@@ -411,11 +399,10 @@ public class FrontController extends HttpServlet {
 	//=======================add from saemin START=======================//
 	
 	// Home/Home.jsp - 게시물 조회
-		public String selectBoard(HttpServletRequest request, HttpServletResponse response, 
-		String scroll, String bid, String comment, String commentDetail, String pageRoute, String m2id) throws ServletException, IOException {
+		public String selectBoard(HttpServletRequest request, HttpServletResponse response, String bid, String comment, String commentDetail, String pageRoute, String m2id) throws ServletException, IOException {
 			String pageMove ="";
 			boardDAO dao = new boardDAO(); 
-			pageMove =dao.selectBoard(request, response, scroll, bid, comment, commentDetail, pageRoute, m2id);
+			pageMove =dao.selectBoard(request, response, bid, comment, commentDetail, pageRoute, m2id);
 			dao.close();
 			return pageMove;
 		}
@@ -430,20 +417,29 @@ public class FrontController extends HttpServlet {
 		}
 
 		// Home/Home.jsp - 게시물 좋아요 누가누가 조회
-		public String likeWho(HttpServletRequest request, HttpServletResponse response, String scroll, String bid) throws ServletException, IOException {
+		public String likeWho(HttpServletRequest request, HttpServletResponse response, String bid, String boardCount) throws ServletException, IOException {
 			String pageMove ="";
 			boardDAO dao = new boardDAO();
-			pageMove =dao.likeWho(request, response, scroll, bid);
+			pageMove =dao.likeWho(request, response, bid, boardCount);
 			dao.close();
 			return pageMove;
 		}
 
 		// Home/Home.jsp - 댓글 등록
-		public String insertComment(HttpServletRequest request, HttpServletResponse response, String scroll, String bid, String comment) throws ServletException, IOException {
+		public String insertComment(HttpServletRequest request, HttpServletResponse response, String bid, String comment, String boardCount) throws ServletException, IOException {
 			String pageMove ="";
 			commentDAO dao = new commentDAO();
 			String commentDetail = request.getParameter("commentDetail");
-			pageMove = dao.insertComment(request, response, scroll, bid, comment, commentDetail);
+			pageMove = dao.insertComment(request, response, bid, comment, commentDetail, boardCount);
+			dao.close();
+			return pageMove;
+		}
+		
+		// Home/AcHome.jsp - 팔로우
+		public String follow(HttpServletRequest request, HttpServletResponse response, String mid) throws ServletException, IOException {
+			String pageMove ="";
+			memberDAO dao = new memberDAO();
+			pageMove = dao.follow(request, response, mid);
 			dao.close();
 			return pageMove;
 		}

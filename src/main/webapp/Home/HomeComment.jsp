@@ -16,13 +16,12 @@
 	<br><br>
 	<div class = "container">
 		<p>─────────────────────────────────────────────────────────────
-		<p>작성자 프사 ${listBoardDetail[0].pfp} // 작성자 아이디${listBoardDetail[0].id}
-		<p>작성자 프사 <a href="/sns/controller/selectBoardDetail?pageRoute=selectBoardDetail&bid=${listBoard.pfp}">${listBoard.id}</a> 작성자 아이디 <a href="/sns/controller/selectBoardDetail?pageRoute=selectBoardDetail&bid=${listBoard.bid}">${listBoard.id}</a>
+		<p>작성자 프사 <a href="/sns/controller/AcHomePage?m2id=${listBoardDetail[0].id}">${listBoardDetail[0].pfp}</a> 아이디 <a href="/sns/controller/AcHomePage?m2id=${listBoardDetail[0].id}">${listBoardDetail[0].id}</a>
 		<p>게시글 내용 ${listBoardDetail[0].content}
 		<p>게시글 날짜 ${listBoardDetail[0].birth}
 		<p>─────────────────────────────────────────────────────────────
 		<c:forEach var="listCommentDetail" items="${listCommentDetail}" varStatus="status">
-			<p>댓글 작성자 프사 ${listCommentDetail.pfp} // 댓글 작성자 아이디 ${listCommentDetail.cid}
+			<p>댓글 작성자 프사 <a href="/sns/controller/AcHomePage?m2id=${listCommentDetail.id}">${listCommentDetail.pfp}</a> 아이디 <a href="/sns/controller/AcHomePage?m2id=${listCommentDetail.id}">${listBoardDetail[0].id}</a>
 			<p>댓글 내용 ${listCommentDetail.content}
 			<p>댓글 날짜 ${listCommentDetail.birth} 좋아요 ${listCommentDetail.likeCount}
 			<p>────────────────────────────

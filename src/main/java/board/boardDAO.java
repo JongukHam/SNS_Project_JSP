@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.mysql.cj.Session;
+
 import comment.commentDTO;
 
 public class boardDAO extends JDBConnect {
@@ -54,11 +56,12 @@ public class boardDAO extends JDBConnect {
 	
 	//=======================add from saemin START=======================//
 	// Home/Home - 게시물 조회
-		public String selectBoard(HttpServletRequest request, HttpServletResponse response, String scroll, String bid, String comment, String commentDetail, String pageRoute, String m2id) {
+		public String selectBoard(HttpServletRequest request, HttpServletResponse response, String bid, String comment, String commentDetail, String pageRoute, String m2id) {
 			String pageMove = "/Home/Home.jsp";
 			ArrayList<boardDTO> listBoard = new ArrayList<boardDTO>();
 			ArrayList<commentDTO> listComment = new ArrayList<commentDTO>();
 			ArrayList<boardDTO> likeWhoId = new ArrayList<boardDTO>();
+			HttpSession session = request.getSession();
 			
 			ResultSet rs2;
 	        try {
@@ -80,6 +83,7 @@ public class boardDAO extends JDBConnect {
 	            // commenttbl에 댓글이 1개 이상일때
 	            if (rs.next()) {
 	            	rs = stmt.executeQuery(query);
+	            	
 	            	while (rs.next()) {
 	                	boardDTO bdto = new boardDTO();
 	                	bdto.setBid(rs.getString("bid"));
@@ -184,6 +188,8 @@ public class boardDAO extends JDBConnect {
 	            // board
 	            request.setAttribute("listBoard", listBoard);
 	            request.setAttribute("listComment", listComment);
+	            request.setAttribute("boardCount", session.getAttribute("boardCount"));
+	            session.removeAttribute("boardCount");
 	            
 	            // 좋아요
 	            request.setAttribute("likeWhoId", likeWhoId);
@@ -285,12 +291,12 @@ public class boardDAO extends JDBConnect {
 		
 
 		// Home/Home.jsp - 게시물 좋아요 누가누가 조회
-		public String likeWho(HttpServletRequest request, HttpServletResponse response, String scroll, String bid) {
+		public String likeWho(HttpServletRequest request, HttpServletResponse response, String bid, String boardCount) {
 			
 	        String pageMove = "/Home/Home.jsp";
 	        HttpSession session = request.getSession();
 	        String memberId = (String)session.getAttribute("memberId");
-	        session.setAttribute("scroll", scroll);
+	        
 	        
 	        try {
 	        	String query = "SELECT likeWho FROM boardtbl WHERE bid=?";
@@ -414,14 +420,19 @@ public class boardDAO extends JDBConnect {
 						request.setAttribute("likeWho", likeWho);
 					}
 				}
+	        	session.setAttribute("boardCount", boardCount);
 	            System.out.println(memberId + "가 " + bid + "번 게시글 좋아요 조회 성공");
 	        }
+	        
+	        
 	        catch (Exception e) {
 	        	System.out.println(memberId + "가 " + bid + "번 게시글 좋아요 조회 실패");
 	            e.printStackTrace();
 	        }
 	        return pageMove;
 	    }
+		
+		
 		
 	
 	//=======================add from saemin END=======================//
@@ -447,6 +458,7 @@ public class boardDAO extends JDBConnect {
 	        
 		    PreparedStatement pstmt=null;
 		    PreparedStatement pstmt2=null;
+		    
 	        try {
 	    	    pstmt= con.prepareStatement(sql);
 				if(memberId!=null) {
@@ -480,7 +492,8 @@ public class boardDAO extends JDBConnect {
 	    	    	memberlist.setName(rs2.getString(6));
 	    	    	memberlist.setBirth(rs2.getString(7));
 	    	    	memberlist.setIntro(rs2.getString(8));
-	    	    	memberlist.setFollower(rs2.getString(9));	
+	    	    	memberlist.setFollower(rs2.getString(9));
+	    	    	memberlist.setFollowerCount(rs2.getString(11));
 	    	    	memberlist.setIsprivate(rs2.getString(10));
 	    	    }
 	    	    System.out.println("보드,멤버 리스트 생성");

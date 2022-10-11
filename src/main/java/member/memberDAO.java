@@ -238,7 +238,148 @@ public class memberDAO extends JDBConnect {
 	    		
 	    }
 	   
-	
+	// Home/AcHome.jsp - 팔로우
+	public String follow(HttpServletRequest request, HttpServletResponse response, String mid) {
+		
+        String pageMove = "/Home/AcHome.jsp";
+        HttpSession session = request.getSession();
+        String memberId = (String)session.getAttribute("memberId");
+        
+        
+        try {
+        	String query = "SELECT follower FROM membertbl WHERE mid = ?";
+        	
+            psmt = con.prepareStatement(query);
+        	psmt.setString(1, mid);
+        	rs = psmt.executeQuery();
+			
+        	// null만 아니면 if 들어감(사실상 무조건 들어감. 왜 이렇게 해놨지?)
+        	if (rs.next()) {
+				String db = rs.getString(1);
+				
+				// 팔로우 아무도 안했으면 첫 팔로우
+				if (db.equals("")) {
+					try {
+						query = "UPDATE membertbl SET follower = ? WHERE mid = ?";
+						psmt.close();
+						rs.close();
+			        	psmt = con.prepareStatement(query);
+			        	psmt.setString(1, memberId);
+			        	psmt.setString(2, mid);
+			        	psmt.executeUpdate();
+			        	
+			        	query = "UPDATE membertbl SET followerCount = followerCount + 1 WHERE mid = ?";
+			        	psmt.close();
+						rs.close();
+			        	psmt = con.prepareStatement(query);
+			        	psmt.setString(1, mid);
+			        	psmt.executeUpdate();
+			        	
+						System.out.println(memberId + "가 " + mid + "님 첫 팔로우 성공");
+					} 
+					catch (Exception e) {
+						System.out.println(memberId + "가 " + mid + "님 첫 팔로우 실패");
+						e.printStackTrace();
+					}
+				}
+				
+				// 팔로우 1 이상일때
+				else {
+
+					String[] db2 = db.split(", ");
+	            	ArrayList<memberDTO> follow = new ArrayList<memberDTO>();
+	            	
+	            	// 변수 db에 담긴 문자열들(아이디들)을 ,와 공백을 제거하여(숫자만 골라내기위해서) ArrayList에 담는다
+	            	for (int i = 0; i < db2.length; i++) {
+	            		memberDTO mdto = new memberDTO();
+	            		mdto.setMid(db2[i]);
+	            		follow.add(mdto);
+	        		}
+	            	
+	            	// 현재 로그인한 아이디가 ArrayList에 있는지 검색
+	            	for (int i = 0; i < follow.size(); i++) {
+	            		
+	            		// 현재 로그인한 아이디가 ArrayList에 있으면(이미 좋아요를 눌렀으면) likeWho 배열에서 아이디 삭제
+						if (follow.get(i).getMid().equals(memberId)) {
+							follow.remove(i);
+							db = "";
+						}
+	            	}
+	            	
+	            	// 현재 로그인한 아이디가 ArrayList에 있으면 팔로우 취소	            	
+	            	if (db.equals("")) {
+						
+	            		// 현재 로그인한 아이디가 삭제된 ArrayList에 있는 값들을 다시 Database에 넣기위해 변수 db에 담는다
+		            	for (int k = 0; k < follow.size(); k++) {
+		        			if (k == follow.size() - 1) {
+		        				db += follow.get(k).getMid();
+		        				break;
+		        			}
+		        			db += follow.get(k).getMid() + ", ";
+		        		}
+		            	
+		            	try {
+		            		query = "UPDATE membertbl SET follower = ? WHERE mid = ?";
+							psmt.close();
+							rs.close();
+				        	psmt = con.prepareStatement(query);
+				        	psmt.setString(1, db);
+				        	psmt.setString(2, mid);
+				        	psmt.executeUpdate();
+				        	
+				        	query = "UPDATE membertbl SET followerCount = followerCount - 1 WHERE mid = ?";
+				        	psmt.close();
+							rs.close();
+				        	psmt = con.prepareStatement(query);
+				        	psmt.setString(1, mid);
+				        	psmt.executeUpdate();
+				        	System.out.println(memberId + "가 " + mid + "님 팔로우 취소 성공");
+						} catch (Exception e) {
+							e.printStackTrace();
+							System.out.println(memberId + "가 " + mid + "님 팔로우 취소 실패");
+						}
+					}
+							
+					// 현재 로그인한 아이디가 ArrayList에 없으면 팔로우
+					else {
+						try {
+							query = "UPDATE membertbl SET follower = CONCAT(follower, ?) WHERE mid = ?";
+							psmt.close();
+							rs.close();
+				        	psmt = con.prepareStatement(query);
+				        	psmt.setString(1, ", " + memberId);
+				        	psmt.setString(2, mid);
+				        	psmt.executeUpdate();
+
+				        	query = "UPDATE membertbl SET followerCount = followerCount + 1 WHERE mid = ?";
+				        	psmt.close();
+							rs.close();
+				        	psmt = con.prepareStatement(query);
+				        	psmt.setString(1, mid);
+				        	psmt.executeUpdate();
+				        	
+				        	System.out.println(memberId + "가 " + mid + "님 팔로우 성공");
+						} catch (Exception e) {
+							e.printStackTrace();
+							System.out.println(memberId + "가 " + mid + "님 팔로우 실패");
+							
+						}
+					}
+					request.setAttribute("follow", follow);
+				}
+			}
+//	 	        	session.setAttribute("boardCount", boardCount);
+            System.out.println(memberId + "가 " + mid + "님 팔로우 조회 성공");
+        }
+        
+        
+        catch (Exception e) {
+        	System.out.println(memberId + "가 " + mid + "님 팔로우 조회 실패");
+            e.printStackTrace();
+        }
+        return pageMove;
+    }
+
 	
 
 }

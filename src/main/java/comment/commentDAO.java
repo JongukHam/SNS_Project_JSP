@@ -12,10 +12,10 @@ public class commentDAO extends JDBConnect {
 	
 	//=======================add from saemin START=======================//
 		// Home/Home - 댓글 등록
-		public String insertComment(HttpServletRequest request, HttpServletResponse response, String scroll, String bid, String comment, String commentDetail) {
+		public String insertComment(HttpServletRequest request, HttpServletResponse response, String bid, String comment, String commentDetail, String boardCount) {
 			
 			HttpSession session = request.getSession();
-			session.setAttribute("scroll", scroll);
+			session.setAttribute("boardCount", boardCount);
 			String memberId = (String)session.getAttribute("memberId");
 	        
 			String pageMove="";

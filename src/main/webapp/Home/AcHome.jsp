@@ -11,7 +11,7 @@
 		if (request.getAttribute("boardlist") == null) {
 			response.sendRedirect("/sns/controller/selectAc?pageRoute=selectAc&m2id="+m2id);
 		} 
-	} else { %>  <%} 
+	}
 	
 %>
 <link rel = "stylesheet" href = "http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
@@ -32,15 +32,19 @@
 	
 	<div class="container" id="profile">
 		<div class="box">
-		    <img class="profile" src="${memberlist.getPfp() }">
+		    <img class="profile" src="${memberlist.getPfp() }">	
 		    <p> 
 		</div>
 		
 		<div class="profile">
 		    <p> 게시물 : ${len }
 		    <p> 팔로워 : ${memberlist.getFollower() }
-		    <p> 팔로우 : ${memberlist.getPfp() }
+		    <p> 팔로우 : ${memberlist.getPfp()}
+		    <p> ID : ${memberlist.getMid()}
+		    <p><button class="btn btn-secondary" onclick="location.href='/sns/controller/follow?pageRoute=follow&mid=${memberlist.getMid()}'">팔로우</button>
+<!-- 		    <p><button class="btn btn-secondary" onclick="/sns/controller/follow">팔로우</button> -->
 		</div>
+		<br>
 	</div>
 	
 	<div class="container" style="margin-bottom:100px;">

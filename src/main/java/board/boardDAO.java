@@ -82,27 +82,21 @@ public class boardDAO extends JDBConnect {
 	
 	//=======================add from saemin START=======================//
 	// Home/Home - 게시물 조회
-		public String selectBoard(HttpServletRequest request, HttpServletResponse response, String bid, String comment, String commentDetail, String pageRoute, String m2id) {
+		public String selectBoard(HttpServletRequest request, HttpServletResponse response, String bid, String comment, String commentDetail, String pageRoute) {
 			String pageMove = "/Home/Home.jsp";
 			ArrayList<boardDTO> listBoard = new ArrayList<boardDTO>();
 			ArrayList<commentDTO> listComment = new ArrayList<commentDTO>();
 			ArrayList<boardDTO> likeWhoId = new ArrayList<boardDTO>();
 			HttpSession session = request.getSession();
-			
+			String LoginId = (String)session.getAttribute("memberId");
 			ResultSet rs2;
 	        try {
 	        	
-	        	String query = "SELECT A.bid, A.content, A.likecount, A.birth, A.id, A.photo, B.pfp, B.mid\r\n"
-	        			+ ", (SELECT count(content) FROM commenttbl C WHERE A.bid = C.id) as '댓글 갯수'\r\n"
-	        			+ ", A.likeWho\r\n"
-	        			+ "FROM boardtbl A, membertbl B, commenttbl C GROUP BY A.bid ORDER BY birth DESC";
-	        	if(m2id!=null) {
-	        		query = "SELECT A.bid, A.content, A.likecount, A.birth, A.id, A.photo, B.pfp, B.mid\r\n"
-		        			+ ", (SELECT count(content) FROM commenttbl C WHERE A.bid = C.id) as '댓글 갯수'\r\n"
-		        			+ ", A.likeWho\r\n"
-		        			+ "FROM boardtbl A, membertbl B, commenttbl C where A.id="+m2id+" GROUP BY A.bid ORDER BY birth DESC";
-	        		pageMove="/Home/AcHome.jsp";
-	        	}
+	        	String query = "SELECT A.bid as '글번호', A.content as '글내용', A.likecount as '좋아요갯수', A.birth as '글쓴날짜', A.id as '글쓴이', A.photo as '글사진', B.pfp as '글쓴이프사', A.likeWho as '좋아요리스트',"+
+	                    "(SELECT count(content) FROM commenttbl C WHERE A.bid = C.id) as '댓글 갯수'"+
+	                    "FROM boardtbl A LEFT OUTER JOIN membertbl B "+
+	                    "ON A.id = B.mid WHERE NOT A.id IN ('"+LoginId +"') ORDER BY A.birth DESC";
+	        	
 	            stmt = con.createStatement();
 	            rs = stmt.executeQuery(query);
 	            
@@ -179,8 +173,9 @@ public class boardDAO extends JDBConnect {
 	            // commenttbl에 댓글이 없을때
 	            else {
 					try {
-						query = "SELECT A.bid, A.content, A.likecount, A.birth, A.id, A.photo, B.pfp, B.mid\r\n"
-								+ "FROM boardtbl A, membertbl B GROUP BY A.bid ORDER BY birth DESC";
+						query = "SELECT A.bid as '글번호', A.content as '글내용', A.likecount as '좋아요갯수', A.birth as '글쓴날짜', A.id as '글쓴이', A.photo as '글사진', B.pfp as '글쓴이프사', A.likeWho as '좋아요리스트',"+
+			                    "FROM boardtbl A LEFT OUTER JOIN membertbl B "+
+			                    "ON A.id = B.mid WHERE NOT A.id IN ('"+LoginId +"') ORDER BY A.birth DESC";
 			            stmt.close();
 			            rs.close();
 						stmt = con.createStatement();
@@ -572,6 +567,7 @@ public class boardDAO extends JDBConnect {
 	        return pageMove;
 	    }
 	//=======================add from hyunjun END=======================//
+	
 	
 	
 }

@@ -94,7 +94,8 @@
 				<c:when test="${boardCount == null}">
 					<c:forEach var="i"  begin="0" end="${boardEnd }">
 			        	<p><h3>게시글 번호 ${listBoard.get(i).getBid()}</h3>
-					    <p>작성자 프사 <a href="/sns/controller/AcHomePage?m2id=${listBoard.get(i).getId()}">${listBoard.get(i).getPfp()}</a> 아이디 <a href="/sns/controller/AcHomePage?m2id=${listBoard.get(i).getId()}">${listBoard.get(i).getId()}</a>
+					    <p>작성자 프사 <a href="/sns/controller/AcHomePage?m2id=${listBoard.get(i).getId()}">${listBoard.get(i).getPfp()}</a> 
+					    아이디 <a href="/sns/controller/AcHomePage?m2id=${listBoard.get(i).getId()}">${listBoard.get(i).getId()}</a>
 					    
 <%-- 					    <p>작성자 프사 <a href="/sns/controller/AcHomePage?m2id=${listBoard.id}">${listBoard.id}</a> 작성자 아이디 <a href="/sns/controller/AcHomePage?m2id=${listBoard.id}">${listBoard.id}</a> --%>
 					    

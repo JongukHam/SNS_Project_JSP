@@ -241,7 +241,7 @@ public class memberDAO extends JDBConnect {
 	// Home/AcHome.jsp - 팔로우
 	public String follow(HttpServletRequest request, HttpServletResponse response, String mid) {
 		
-        String pageMove = "/Home/AcHome.jsp";
+		String pageMove = "/controller/selectAc?pageRoute=selectAc&m2id=" + mid;
         HttpSession session = request.getSession();
         String memberId = (String)session.getAttribute("memberId");
         
@@ -412,6 +412,39 @@ public class memberDAO extends JDBConnect {
         	System.out.println(memberId + "가 " + mid + "님 팔로우 조회 실패");
             e.printStackTrace();
         }
+        return pageMove;
+    }
+	
+	//간략한 계정정보 불러오기
+	public String ae(HttpServletRequest req, HttpServletResponse res){      
+		String pageMove = "/Setting/AcEdit.jsp";
+		String memberId = (String)req.getSession().getAttribute("memberId");
+		memberDTO memberlist=new memberDTO();		
+        String sql = "select * from membertbl where mid=?";
+        PreparedStatement pstmt=null;
+        try {
+    	    pstmt= con.prepareStatement(sql);  
+    	    pstmt.setString(1,memberId);	    
+    	    rs = pstmt.executeQuery();
+
+    	    while(rs.next()) {	    	    	
+    	    	memberlist.setMid(rs.getString(1));
+    	    	memberlist.setEmail(rs.getString(3));
+    	    	memberlist.setPfp(rs.getString(4));
+    	    	memberlist.setPhone(rs.getString(5));
+    	    	memberlist.setName(rs.getString(6));
+    	    	memberlist.setBirth(rs.getString(7));
+    	    	memberlist.setIntro(rs.getString(8));
+    	    }
+    	    System.out.println("간략한 로그인 정보 불러옴");
+    	}
+        catch (Exception e) {
+            System.out.println("간략한 로그인 정보 불러오는 중 예외 발생");
+            e.printStackTrace();
+        }   	        
+        req.setAttribute("memberlist", memberlist);  
+        System.out.println("간략한 로그인 정보 불러옴");
+        
         return pageMove;
     }
 

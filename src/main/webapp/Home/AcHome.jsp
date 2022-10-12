@@ -11,7 +11,7 @@
 		if (request.getAttribute("boardlist") == null) {
 			response.sendRedirect("/sns/controller/selectAc?pageRoute=selectAc&m2id="+m2id);
 		} 
-	}
+	} else { %>  <%} 
 	
 %>
 <link rel = "stylesheet" href = "http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
@@ -23,28 +23,28 @@
 
 
 
-
 </head>	
 
 
 
 <body>
-	
+
+
 	<div class="container" id="profile">
 		<div class="box">
-		    <img class="profile" src="${memberlist.getPfp() }">	
+		    <img class="profile" src="${memberlist.getPfp() }">
 		    <p> 
 		</div>
 		
 		<div class="profile">
 		    <p> 게시물 : ${len }
 		    <p> 팔로워 : ${memberlist.getFollower() }
-		    <p> 팔로우 : ${memberlist.getPfp()}
-		    <p> ID : ${memberlist.getMid()}
+		    <p> 팔로우 : 0
 		    <p><button class="btn btn-secondary" onclick="location.href='/sns/controller/follow?pageRoute=follow&mid=${memberlist.getMid()}'">팔로우</button>
-<!-- 		    <p><button class="btn btn-secondary" onclick="/sns/controller/follow">팔로우</button> -->
+		    
 		</div>
-		<br>
+		<p> 아이디 : ${memberlist.getMid() } <br/>
+		<p> 사진 : ${memberlist.getPfp() }
 	</div>
 	
 	<div class="container" style="margin-bottom:100px;">
@@ -63,7 +63,8 @@
 		 		<div class="container" id="bphotos">		
 			 		<c:forEach var="i" begin="${0}" end="${a-1}">				 							 			
 			 			<div class="child">
-			 				<img id="bphoto"
+<!-- 		============    이게 컨텐트에서 불러오는 이미지파일의 쿼리셀렉터 주소로 쓰일 아이디 -->
+			 				<img id="bphoto" 
 			 				src="../ImageFile/${boardlist.get(i+k*3).getPhoto()}"	
 			 				style="margin-right:10px; margin-bottom:10px;"		 				
 			 				onclick="location.href='/sns/controller/AcContentPage?m2id=${param.m2id}&index=${i+k*3}'"/>				 				

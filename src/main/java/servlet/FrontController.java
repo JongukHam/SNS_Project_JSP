@@ -63,12 +63,13 @@ public class FrontController extends HttpServlet {
 		String m2id=request.getParameter("m2id")==null? null : request.getParameter("m2id");
 		//acContent 관련 변수
 		String index=request.getParameter("index")==null? null : request.getParameter("index");
-		//selfHome 관련 변수
-		String memberId=request.getParameter("memberId")==null? null : request.getParameter("memberId");
 		// 버튼 눌렀을때 몇번째 게시물인지
 		String boardCount = request.getParameter("boardCount") == null ? null : request.getParameter("boardCount");
-		// AcHome에서 왔을때 누구를(mid) 팔로우 할건지 지정하기위
-		String mid = request.getParameter("mid") == null ? null : request.getParameter("mid");
+		//팔로우 
+		String mid=request.getParameter("mid")==null? null : request.getParameter("mid");
+		
+		
+		
 		String pageMove = null;
 		
 		//=========================추가 끝
@@ -109,8 +110,10 @@ public class FrontController extends HttpServlet {
 			request.getRequestDispatcher("/Setting/AcEdit.jsp").forward(request, response);
 			break;	
 		case "/AcHomePage":
-			request.getRequestDispatcher("/Home/AcHome.jsp").forward(request, response);
-			break;
+			if(LoginedID.equals(m2id)) {
+				request.getRequestDispatcher("/Home/SelfHome.jsp").forward(request, response);
+			} else {request.getRequestDispatcher("/Home/AcHome.jsp").forward(request, response);}
+			break;		
 		case "/AcContentPage":
 			request.getRequestDispatcher("/board/AcContent.jsp").forward(request, response);
 			break;
@@ -156,7 +159,7 @@ public class FrontController extends HttpServlet {
 			Aedit(request,response,session);
 			break;	
 		case "/Pedit":
-			Pedit(request,response,session);
+			Pedit(request,response);
 			break;	
 			
 			
@@ -170,7 +173,7 @@ public class FrontController extends HttpServlet {
 			
 			
 		case "/selectBoard":
-			pageMove = selectBoard(request, response, bid, comment, commentDetail, pageRoute, m2id);
+			pageMove = selectBoard(request, response, bid, comment, commentDetail, pageRoute);
 			request.getRequestDispatcher(pageMove).forward(request, response);
 			//
 			break;
@@ -188,7 +191,9 @@ public class FrontController extends HttpServlet {
 			request.getRequestDispatcher(pageMove).forward(request, response);
 			break;
 		case "/selectAc":
-			pageMove = selectAc(request, response, m2id, index, memberId);
+			String memberId=request.getParameter("memberId")==null? null : request.getParameter("memberId");
+			String ae=request.getParameter("ae")==null? null : request.getParameter("ae");
+			pageMove = selectAc(request, response, m2id, index, memberId,ae);
 			request.getRequestDispatcher(pageMove).forward(request, response);
 			break;
 		case "/follow":
@@ -343,15 +348,32 @@ public class FrontController extends HttpServlet {
 		rd.forward(request,response);
 	}
 	
-	private void Pedit (HttpServletRequest request,HttpServletResponse response,HttpSession session)throws ServletException, IOException{
-		String mid = (String)session.getAttribute("memberId");
-
-		System.out.println(mid);
-		memberDAO dao = new memberDAO();
-		dao.Pedit(request, response, mid);
+	private void Pedit (HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
+		HttpSession session = request.getSession();
+	    String memberId = (String)session.getAttribute("memberId");
+		request.setCharacterEncoding("UTF-8");
+		String ImageFolderPath = request.getServletContext().getRealPath("/profilephoto");
+		String ImageFilePath = "";
 		
-		RequestDispatcher rd = request.getRequestDispatcher("/Home/SelfHome.jsp");
-		rd.forward(request,response);
+		UploadUtil2 uploadUtil = UploadUtil2.create(request.getServletContext());
+
+		List<Part> parts = (List<Part>) request.getParts();
+		
+		for(Part part : parts) {
+			if(!part.getName().equals("profilephoto")) continue; //profilephoto로 들어온 Part가 아니면 스킵
+			if(part.getSubmittedFileName().equals("")) continue; //업로드 된 파일 이름이 없으면 스킵
+			System.out.println(part.getName());
+			
+			ImageFilePath = uploadUtil.saveFiles(part,ImageFolderPath, memberId);
+			
+			System.out.println("=========saveImage=========");
+			System.out.println("ImageFolderPath : " + ImageFolderPath);
+			System.out.println("ImageFilePath : " + ImageFilePath);
+			System.out.println("=========saveImage=========");
+		}
+		memberDAO dao = new memberDAO();
+		dao.Pedit(request, response, ImageFilePath);
+		response.sendRedirect("/sns/controller/MyPage");
 	}
 	
 	
@@ -400,10 +422,10 @@ public class FrontController extends HttpServlet {
 	//=======================add from saemin START=======================//
 	
 	// Home/Home.jsp - 게시물 조회
-		public String selectBoard(HttpServletRequest request, HttpServletResponse response, String bid, String comment, String commentDetail, String pageRoute, String m2id) throws ServletException, IOException {
+		public String selectBoard(HttpServletRequest request, HttpServletResponse response, String bid, String comment, String commentDetail, String pageRoute) throws ServletException, IOException {
 			String pageMove ="";
 			boardDAO dao = new boardDAO(); 
-			pageMove =dao.selectBoard(request, response, bid, comment, commentDetail, pageRoute, m2id);
+			pageMove =dao.selectBoard(request, response, bid, comment, commentDetail, pageRoute);
 			dao.close();
 			return pageMove;
 		}
@@ -448,13 +470,23 @@ public class FrontController extends HttpServlet {
 		
 		
 	//=======================add from hyunjun START=======================//
-		public String selectAc(HttpServletRequest request, HttpServletResponse response, String m2id, String index, String memberId) throws ServletException, IOException {
+		public String selectAc(HttpServletRequest request, HttpServletResponse response, String m2id, String index, String memberId, String ae) throws ServletException, IOException {
 			String pageMove ="";
-			boardDAO dao = new boardDAO(); 
-			pageMove =dao.selectAc(request, response, m2id, index, memberId);
-			dao.close();
+			
+			if(ae!=null) {
+				memberDAO dao = new memberDAO(); 
+				pageMove =dao.ae(request, response);
+				dao.close();
+				
+			} else {
+				boardDAO dao = new boardDAO(); 
+				pageMove =dao.selectAc(request, response, m2id, index, memberId);
+				dao.close();
+			}
+			
 			return pageMove;
 		}
+}
 		
 	//=======================add from hyunjun END=======================//
-}//class end
+//class end

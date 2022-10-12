@@ -22,6 +22,12 @@
 
 
 
+<script>
+
+//  let location = document.querySelector("#champPre").offsetTop;
+ window.scrollTo(0,100);
+
+</script>
 
 
 </head>	
@@ -37,14 +43,21 @@
 		</div>
 		
 		<div class="profile">
-		    <p> 게시물 : ${len }
-		    <p> 팔로워 : ${memberlist.getFollower() }
-		    <p> 팔로우 : ${memberlist.getPfp() }
+			<div style="display:flex;">
+			    <p> 게시물 : ${len } &nbsp;
+			    <p> 팔로워 : ${memberlist.getFollower() } &nbsp;
+			    <p> 팔로우 : 0 
+		    </div>
+		    <div>
+		    	<p> 아이디 : ${memberlist.getMid() }
+				<p> 사진 : ${memberlist.getPfp() }
+		    </div>
 		</div>
+
 	</div>
 	
-	<div class="container" style="margin-bottom:100px;">
-		<p onclick="location.href='/sns/controller/ProfileEditPage';" > 프로필 편집
+	<div class="container" style="margin-bottom:100px; margin-top:20px;">
+		<button class="btn btn-secondary" onclick="location.href='/sns/controller/ProfileEditPage';" > 프로필 편집</button>
 		
 	</div>
 	

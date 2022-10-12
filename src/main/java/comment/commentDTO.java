@@ -7,7 +7,7 @@ public class commentDTO {
 	private String birth;
 	private String id;
 	private String likeCount;
-
+	private String commentId;
 	private String pfp;
 	
 	public String getCid() {
@@ -47,6 +47,12 @@ public class commentDTO {
 		this.pfp = pfp;
 	}
 
+	  public String getCommentId() {
+	      return commentId;
+	   }
+	   public void setCommentId(String commentId) {
+	      this.commentId = commentId;
+	   }
 	
 	
 }

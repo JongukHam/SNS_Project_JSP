@@ -45,7 +45,7 @@ p{height:30px; margin:16px;}
 		
 		<form name="formP"  action = "/sns/controller/Pedit" method="post" enctype="multipart/form-data">
 		    <p> <input type = "text" class="form-control"  name = "intro"/> 	   
-		    <p> <input type="file" name = "ImageFile">             
+		    <p> <input type="file" name = "profilephoto">             
 	    </form>
     </div>
 	

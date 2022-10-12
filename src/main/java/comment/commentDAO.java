@@ -66,5 +66,32 @@ public class commentDAO extends JDBConnect {
 	    	return pageMove;
 	    }
 		
+		
+		   // Home/HomeComment - 댓글 삭제
+		   public String deleteComment(HttpServletRequest request, HttpServletResponse response, String cid, String bid) {
+		      
+		      HttpSession session = request.getSession();
+//		      session.setAttribute("boardCount", boardCount);
+		      String memberId = (String)session.getAttribute("memberId");
+		      String pageMove="";
+		      
+		       try {
+		          //종욱 추가
+		          String query = "DELETE FROM commenttbl WHERE commentid = ?";
+		            psmt = con.prepareStatement(query);
+		           psmt.setString(1, cid);
+		           psmt.executeUpdate();
+		           
+		            System.out.println(memberId + "가 " + cid + "번 댓글 삭제 성공");
+		        }
+		        catch (Exception e) {
+		           System.out.println(memberId + "가 " + cid + "번 댓글 삭제 실패");
+		            e.printStackTrace();
+		        }
+		        
+		      pageMove = "/controller/selectBoardDetail?pageRoute=selectBoardDetail&bid=" + bid;
+		       return pageMove;
+		    }
+		
 		//=======================add from saemin END=======================//
 }

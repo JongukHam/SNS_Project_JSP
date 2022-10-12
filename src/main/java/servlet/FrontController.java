@@ -68,7 +68,7 @@ public class FrontController extends HttpServlet {
 		//팔로우 
 		String mid=request.getParameter("mid")==null? null : request.getParameter("mid");
 		
-		
+		String cid = request.getParameter("cid") == null ? null : request.getParameter("cid");
 		
 		String pageMove = null;
 		
@@ -201,6 +201,10 @@ public class FrontController extends HttpServlet {
 			pageMove = follow(request, response, mid);
 			request.getRequestDispatcher(pageMove).forward(request, response);	
 			break;
+	      case "/deleteComment":
+	          pageMove = deleteComment(request, response, cid, bid);
+	          request.getRequestDispatcher(pageMove).forward(request, response);   
+	          break;
 		//=========================추가 끝
 		}
 		
@@ -348,13 +352,14 @@ public class FrontController extends HttpServlet {
 		rd.forward(request,response);
 	}
 	
+	//프로필 수정
 	private void Pedit (HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
 		HttpSession session = request.getSession();
-	    String memberId = (String)session.getAttribute("memberId");
+	    String memberId = (String)session.getAttribute("memberId"); //로그인된 아이디
 		request.setCharacterEncoding("UTF-8");
-		String ImageFolderPath = request.getServletContext().getRealPath("/profilephoto");
-		String ImageFilePath = "";
-		
+		String ImageFolderPath = request.getServletContext().getRealPath("/profilephoto"); //프로필 이미지가 올라갈 폴더 패스
+		String savedName = "";
+		String intro = "";
 		UploadUtil2 uploadUtil = UploadUtil2.create(request.getServletContext());
 
 		List<Part> parts = (List<Part>) request.getParts();
@@ -364,15 +369,22 @@ public class FrontController extends HttpServlet {
 			if(part.getSubmittedFileName().equals("")) continue; //업로드 된 파일 이름이 없으면 스킵
 			System.out.println(part.getName());
 			
-			ImageFilePath = uploadUtil.saveFiles(part,ImageFolderPath, memberId);
+			savedName = uploadUtil.saveFiles(part,ImageFolderPath, memberId);
 			
 			System.out.println("=========saveImage=========");
-			System.out.println("ImageFolderPath : " + ImageFolderPath);
-			System.out.println("ImageFilePath : " + ImageFilePath);
+			System.out.println("Saved Name : " + ImageFolderPath);
+			System.out.println("ImageFilePath : " + savedName);
 			System.out.println("=========saveImage=========");
 		}
+		for(Part part :parts) {
+			if(!part.getName().equals("intro")) continue; 
+//			if(part.getSubmittedFileName().equals("")) continue; 
+			intro = request.getParameter("intro");
+			
+			
+		}
 		memberDAO dao = new memberDAO();
-		dao.Pedit(request, response, ImageFilePath);
+		dao.Pedit(request, response, memberId,intro,savedName);
 		response.sendRedirect("/sns/controller/MyPage");
 	}
 	
@@ -466,6 +478,14 @@ public class FrontController extends HttpServlet {
 			dao.close();
 			return pageMove;
 		}
+	      // Home/AcHome.jsp - 댓글 삭제
+	      public String deleteComment(HttpServletRequest request, HttpServletResponse response, String cid, String bid) throws ServletException, IOException {
+	         String pageMove ="";
+	         commentDAO dao = new commentDAO();
+	         pageMove = dao.deleteComment(request, response, cid, bid);
+	         dao.close();
+	         return pageMove;
+	      }
 	//=======================add from saemin END=======================//
 		
 		

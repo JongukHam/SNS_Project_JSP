@@ -202,33 +202,22 @@ public class memberDAO extends JDBConnect {
 	    }
 		
 	//프로필 수정(소개, 사진)
-	    public void Pedit(HttpServletRequest request, HttpServletResponse response, String mid) throws IOException {	    
+	    public void Pedit(HttpServletRequest request, HttpServletResponse response, String mid,String intro,String savedName) throws IOException {	    
 	    	
 	    	try{
-	    		String realFolder= request.getSession().getServletContext().getRealPath("/upload");//올리는 곳의 경로
-	        	MultipartRequest multi= new MultipartRequest(request, realFolder, 5*1024*1024, 
-	        			"utf-8", new DefaultFileRenamePolicy()); //product_set에서 넘겨받은 정보 담고있는 객체//괄호안은 
-
-	        	Enumeration files = multi.getFileNames();		
-	        	String file = (String) files.nextElement();
-	        	String filename = multi.getFilesystemName(file); //올린 이미지 파일이름
 	        	
-	        	String intro=multi.getParameter("intro");
-
-	        	
-	        	
-	        	PreparedStatement pstmt=null;   
+	        	 
 	        	String sql=null;
 	        	
 	    		if(intro!=null){
 		    		sql = "update membertbl set pfp=?,intro=? where mid=?";	  
-		    		pstmt= con.prepareStatement(sql);	
-		    		pstmt.setString(1,"../upload/"+filename); 
-					pstmt.setString(2,intro);
-					pstmt.setString(3,mid);
-		    		pstmt.executeUpdate();
+		    		psmt= con.prepareStatement(sql);	
+		    		psmt.setString(1,savedName); 
+		    		psmt.setString(2,intro);
+		    		psmt.setString(3,mid);
+		    		psmt.executeUpdate();
 	    		}
-	    		System.out.println(realFolder+filename);
+	    		System.out.println(savedName);
 	    		System.out.println("프로필 수정");
 
 	    	} catch(SQLException ex){

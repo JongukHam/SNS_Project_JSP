@@ -32,7 +32,7 @@
 
 	<div class="container" id="profile">
 		<div class="box">
-		    <img class="profile" src="${memberlist.getPfp() }">
+		    <img class="profile" src="../profilephoto/${memberlist.getPfp() }">
 		    <p> 
 		</div>
 		

@@ -78,7 +78,6 @@
 		</c:forEach>
 	</c:if>		
 
-	
 
 </body>
 

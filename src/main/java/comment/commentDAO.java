@@ -76,11 +76,21 @@ public class commentDAO extends JDBConnect {
 		      String pageMove="";
 		      
 		       try {
-		          //종욱 추가
+		          
 		          String query = "DELETE FROM commenttbl WHERE commentid = ?";
-		            psmt = con.prepareStatement(query);
+		           psmt = con.prepareStatement(query);
 		           psmt.setString(1, cid);
 		           psmt.executeUpdate();
+		           
+
+		            //종욱 알림 추가
+		        	psmt.close();
+		        	String notice = String.format("%s님이 %s게시글에 댓글을 달았습니다",memberId,bid);
+		        	query = "delete from noti where notice=?";
+		        	psmt = con.prepareStatement(query);
+		        	psmt.setString(1, notice);
+		        	psmt.executeUpdate();
+		        	//
 		           
 		            System.out.println(memberId + "가 " + cid + "번 댓글 삭제 성공");
 		        }

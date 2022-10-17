@@ -9,8 +9,12 @@
   width: 100%;
   position: relative;
   text-align: center;
-  margin-top:15px;
-  margin-bottom:100px;
+  
+  background-color:white;
+  background-clip:border-box;
+  padding-top:15px;
+  padding-bottom:30px;
+  margin-bottom:70px;
 }
 #AcNav>a {
   display: block;
@@ -20,6 +24,10 @@
   left: 10%;
 }
 
+#AcNav *{
+	color: #6667AB;
+}
+
 #AcNav>form {
 	display:inline-block;
 	top:50%;
@@ -27,7 +35,7 @@
 #AcNav>form>input{
 	width:240px;
 	height:35px;
-	border:1px solid #BEC3C9;
+	border:1px solid #6667AB;
 	border-radius: 7px;
 	background-color:#EFEFEF;
 }
@@ -103,17 +111,20 @@
       <li class="n-sideBar"><a href="/sns/controller/HomePage"><i class="fa-solid fa-house"></i></a></li>
 <!--내페이지-->   
       <li class="n-sideBar"><a href="/sns/controller/goMyPage"><i class="fa-solid fa-circle-user"></i></a></li>
+<!-- 로그아웃 -->
+	  <li class="n-sideBar"><a href="#" data-toggle="modal" data-target="#logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
 <!--햄버거-->  
 <!-- drop down -->
       <li class="sideBar">
       	<div class="dropdown">
-  			<a class="btn btn-primary dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+  			<a class="btn btn-light dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
    			 	<i class="fa-solid fa-bars"></i>
   			</a>
 		  <div class="dropdown-menu">
-		    <a class="dropdown-item" href="/sns/controller/HomePage"><i class="fa-solid fa-house">Home</i></a>
-		    <a class="dropdown-item" href="#"><i class="fa-solid fa-paper-plane"></i>DM</a>
-		    <a class="dropdown-item" href="/sns/controller/goMyPage"><i class="fa-solid fa-circle-user"></i>MyPage</a>
+		    <a class="dropdown-item" href="/sns/controller/HomePage"><i class="fa-solid fa-house"></i>&nbsp;Home</a>
+		    <a class="dropdown-item" href="#"><i class="fa-solid fa-paper-plane"></i>&nbsp;DM</a>
+		    <a class="dropdown-item" href="/sns/controller/goMyPage"><i class="fa-solid fa-circle-user"></i>&nbsp;MyPage</a>
+		    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logout"><i class="fa-solid fa-arrow-right-from-bracket"></i>&nbsp;LogOut</a>
 		  </div>
 		</div>
 		</li>

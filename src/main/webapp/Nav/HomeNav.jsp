@@ -7,11 +7,16 @@
 <style>
 	* { font-family: 'Spoqa Han Sans Neo', 'sans-serif'; }
 #homeNav {
+  background-color:white;
+  background-clip:border-box;
+  padding-top:15px;
+  padding-bottom:30px;
+  margin-bottom:70px;
+  
   width: 100%;
   position: relative;
   text-align: center;
-  margin-top:15px;
-  margin-bottom:100px;
+
 }
 #homeNav>a {
   display: block;
@@ -21,6 +26,10 @@
   left: 10%;
 }
 
+#homeNav *{
+	color: #6667AB;
+}
+
 #homeNav>form {
 	display:inline-block;
 	top:50%;
@@ -28,7 +37,7 @@
 #homeNav>form>input{
 	width:240px;
 	height:35px;
-	border:1px solid #BEC3C9;
+	border:1px solid #6667AB;
 	border-radius: 7px;
 	background-color:#EFEFEF;
 }
@@ -104,16 +113,19 @@
       <li class="n-sideBar"><a href="/sns/controller/WritePage"><i class="fa-solid fa-pen"></i></a></li>
 <!--내페이지-->      
       <li class="n-sideBar"><a href="/sns/controller/goMyPage"><i class="fa-solid fa-circle-user"></i></a></li>
+<!-- 로그아웃 -->
+	  <li class="n-sideBar"><a href="#" data-toggle="modal" data-target="#logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
 <!--햄버거-->      
       <li class="sideBar">
       	<div class="dropdown">
-  			<a class="btn btn-primary dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+  			<a class="btn btn-light dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
    			 	<i class="fa-solid fa-bars"></i>
   			</a>
 		  <div class="dropdown-menu">
-		    <a class="dropdown-item" href="/sns/controller/WritePage"><i class="fa-solid fa-pen"></i>Write</a>
-		    <a class="dropdown-item" href="#"><i class="fa-solid fa-paper-plane"></i>DM</a>
-		    <a class="dropdown-item" href="/sns/controller/goMyPage"><i class="fa-solid fa-circle-user"></i>MyPage</a>
+		    <a class="dropdown-item" href="/sns/controller/WritePage"><i class="fa-solid fa-pen"></i>&nbsp; Write</a>
+		    <a class="dropdown-item" href="#"><i class="fa-solid fa-paper-plane"></i>&nbsp; DM</a>
+		    <a class="dropdown-item" href="/sns/controller/goMyPage"><i class="fa-solid fa-circle-user"></i>&nbsp; MyPage</a>
+		    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logout"><i class="fa-solid fa-arrow-right-from-bracket"></i>&nbsp;LogOut</a>
 		  </div>
 		</div>
 		</li>

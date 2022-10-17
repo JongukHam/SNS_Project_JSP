@@ -7,15 +7,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-<jsp:include page="../CssLink/CssLink.jsp" flush="true" />
 <meta charset="UTF-8">
 <title>Write</title>
+<jsp:include page="../Nav/HomeNav.jsp" flush="true" />
 <style>
    * { font-family: 'Spoqa Han Sans Neo', 'sans-serif'; }
+.container{
+	margin-top:20px;
+	color:#6667AB;
+}
+.custom-file-label::after {
+color:#6667AB;
+}
+
 .writeForm{
-   background-color:#fcf7f7;
+   background-color:white;
+   border:1px solid #6667AB;
    border-radius:10px;
-   height:500px;
+   height:550px;
    padding:30px;
    display:flex;
 }
@@ -43,35 +52,47 @@
    height:50%;
    width:100%;
    resize:none;
-   border: 1px;
+   border: solid #6667AB;
    border-radius:7px;
 }
 .writeHere .i4{
    width:60px;
-   margin-left:90%;
    border:1px solid #F8F8F8;
+   text-align:rigth;
 }
-
 </style>
-</head>   
-<jsp:include page="../Nav/HomeNav.jsp" flush="true" />
-<body>
 
+</head>   
+<body style="background-color:#f5f5f5;">
 <div class="container">
    <div class="writeForm">
       <div class="texts">
-         <p>ID
-         <p class="i2">content
-         <p>Image
+         <p>아이디
+         <p class="i2" style="margin-top:30px;">내용
+         <p>이미지
       </div>
       <div class="writeHere">
          <p>&nbsp;${memberId }
          <form name="writeForm" method="post" action="/sns/controller/uploadBoard" enctype="multipart/form-data">
-            <textarea class="i2" name="content" maxlength='500' placeholder="내용을 입력해 주세요"></textarea>
-            <input class="i3" type="file" name="ImageFile" />
-            <input class="i3" type="file" name="ImageFile" />
-            <input class="i3" type="file" name="ImageFile" />
-            <input class="i4" type="submit" value="등록" />
+            <textarea class="i2" name="content" maxlength='500' placeholder="내용을 입력해 주세요" style="color:#6667AB;"></textarea>
+           
+            <div class="custom-file mb-3" >
+   		    <input type="file" class="custom-file-input" id="validatedCustomFile" name="ImageFile" required">
+            <label class="custom-file-label" for="validatedCustomFile" style="color:#6667AB;">Choose file...</label>
+            <div class="invalid-feedback" >Example invalid custom file feedback</div>
+            </div>
+            <div class="custom-file mb-3">
+   		    <input type="file" class="custom-file-input" id="validatedCustomFile" name="ImageFile" >
+            <label class="custom-file-label" for="validatedCustomFile" style="color:#6667AB;">Choose file...</label>
+            <div class="invalid-feedback">Example invalid custom file feedback</div>
+            </div>
+            <div class="custom-file mb-3">
+   		    <input type="file" class="custom-file-input" id="validatedCustomFile" name="ImageFile" >
+            <label class="custom-file-label" for="validatedCustomFile" style="color:#6667AB;">Choose file...</label>
+            <div class="invalid-feedback">Example invalid custom file feedback</div>
+            </div>
+      
+            <p style="text-align:right;"><input class="i4" type="submit" value="등록" style=" color:#6667AB;"/>
          </form>
       </div>
    

@@ -17,7 +17,7 @@
 <link rel = "stylesheet" href = "http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 <style>	<%@ include file="style.jsp" %>	
 </style><meta charset="UTF-8">
-<title>AcHome - 계정 홈</title>
+<title>SelfHome</title>
 <jsp:include page="../Nav/SelfHomeNav.jsp"/>
 
 

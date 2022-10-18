@@ -10,16 +10,72 @@
 <title>Searched</title>
 <!-- add Nav -->
 <jsp:include page="../Nav/HomeNav.jsp" flush="true" />
+<style>
+.container{
+	border:1px solid #6667AB;
+	border-radius:7px;
+	padding:10px 0px 0px 0px;
+}
+
+.container h2{
+	padding-bottom:10px;
+	border-bottom:1px solid #6667AB;
+	color:#6667AB;
+}
+
+.container ul{
+	list-style:none;
+	padding-left:0px;
+}
+.wrap-profile{
+display:flex;
+padding-left:30%;
+}
+.profilePhoto{
+width:50px;
+height:50px;
+overflow:hidden;
+border-radius: 70%;
+display:flex;
+margin-right:20px;
+
+}
+.profilePhoto>a{
+width:100%;
+height:100%;
+}
+.profile{
+width:100%;
+height:100%;
+}
+.wrap-profile > .id-tag{
+margin:auto 0;
+font-size:1.1rem;
+color:#6667AB;
+}
+ul > li{
+margin-bottom:10px;
+}
+</style>
 </head>	
 <body>
 
 
 	
 	<div class="container" style="text-align:center;">
-		<h1>searched</h1>
+		<h2>검색된 회원</h2>
+		<ul>
 		<c:forEach var="memberDTO" items="${searchedList }">
-			<p><a href="/sns/controller/AcHomePage?id='${memberDTO.getMid() }'">${memberDTO.getMid() }</a></p>
+			<li>
+			<div class="wrap-profile">
+			<div class="profilePhoto">
+			<a href="/sns/controller/AcHomePage?id='${memberDTO.getMid() }'"><img class="profile" src="../profilephoto/${memberDTO.getPfp() }"/></a>
+			</div>
+			<a class="id-tag" href="/sns/controller/AcHomePage?id='${memberDTO.getMid() }'">${memberDTO.getMid() }</a>
+			</div>
+	
 		</c:forEach>
+		</ul>
 	</div>
 	
 	

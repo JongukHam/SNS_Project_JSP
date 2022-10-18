@@ -20,6 +20,70 @@ import db.JDBConnect;
 
 public class memberDAO extends JDBConnect {
 	
+	//로그인
+	public memberDTO login(String uid,String upass) {
+	      
+	      memberDTO dto = new memberDTO(); 
+	      String query = "SELECT * FROM membertbl WHERE mid=? and pw=?";  // member테이블에 id passwd 있는지 확인
+	      
+	      try {  
+	         psmt = con.prepareStatement(query);
+	         psmt.setString(1, uid);
+	         psmt.setString(2, upass);
+	         rs = psmt.executeQuery();
+	         
+	         if(rs.next()) { // 있으면 
+	            dto.setMid(rs.getString("mid"));
+	            dto.setPw(rs.getString("pw"));
+	         }
+	      }
+	      catch(Exception e) {
+	         e.printStackTrace();
+	      }
+	      return dto; 
+	    }
+
+	//회원가입
+	public String signup(HttpServletRequest request, HttpServletResponse response){
+	      String singUpState = "";
+		  
+		  String mid = request.getParameter("mid");
+	      String pw = request.getParameter("pw");
+	      String name = request.getParameter("name");
+	      String email = request.getParameter("email");
+	      String phone = request.getParameter("phone");
+	      String birth = request.getParameter("birth");
+	      
+	      try{
+	         String sql = "insert into membertbl(mid,pw,name,email,phone,birth) values(?,?,?,?,?,?)"; 
+	         psmt = con.prepareStatement(sql);
+
+	         psmt.setString(1,mid);
+	         psmt.setString(2,pw);
+	         psmt.setString(3,name);
+	         psmt.setString(4,email);
+	         psmt.setString(5,phone);
+	         psmt.setString(6,birth);
+	            
+	         int updateState= psmt.executeUpdate(); 
+	         if(updateState>0) {
+	        	 singUpState = "<script> alert('회원가입 성공했습니다.');location.href='/sns/controller/LoginPage'; </script>;";
+	         }else {
+	        	 singUpState = "<script> alert('회원가입에 실패했습니다.');location.href='/sns/controller/SignUpPage'; </script>;";
+	         }
+	         
+	      }catch(Exception ex){
+	    	  singUpState = "<script> alert('회원가입에 실패했습니다.');location.href='/sns/controller/SignUpPage'; </script>;";
+	         System.out.println("가입실패");
+	         System.out.println("SQLException : " + ex.getMessage());
+	      }finally{
+	         close();
+	      }
+	      return singUpState;
+	   }
+
+	
+	
 	//검색한 문자가 포함된 아이디를 리스트 리턴
 	public ArrayList<memberDTO> getSearch(String searchText){
 		ArrayList<memberDTO> searched = new ArrayList<memberDTO>();

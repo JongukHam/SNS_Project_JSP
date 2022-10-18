@@ -11,21 +11,19 @@
 	* { font-family: 'Spoqa Han Sans Neo', 'sans-serif'; }
 	#editPage{
 		display:flex;
-		border:1px solid black;
+		border:1px solid #6667AB;
 		border-radius : 7px;
 	}
 	#editPage>.names{
-		margin-left:7%;
-		border:1px solid red;
-		border-radius : 7px;
+		border-right:1px solid #6667AB;
 		width:27%;
 		text-align:center;
 	}
 	#editPage>.contents{
-		border:1px solid green;
 		border-radius : 7px;
 		width:60%;
-		padding-left:30%;
+		padding-left:20%;
+		color:#6667AB;
 	}
 	#editPage ul{
 		list-style:none;

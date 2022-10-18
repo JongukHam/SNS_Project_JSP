@@ -11,8 +11,12 @@
   width: 100%;
   position: relative;
   text-align: center;
-  margin-top:15px;
-  margin-bottom:100px;
+  
+  background-color:white;
+  background-clip:border-box;
+  padding-top:15px;
+  padding-bottom:30px;
+  margin-bottom:70px;
 }
 #AcNav>a {
   display: block;
@@ -20,6 +24,10 @@
   font-weight: 900;
   position: absolute;
   left: 10%;
+}
+
+#AcNav *{
+	color: #6667AB;
 }
 
 #AcNav>form {
@@ -111,15 +119,15 @@
 <!--햄버거-->  
       <li class="sideBar">
       	<div class="dropdown">
-  			<a class="btn btn-primary dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+  			<a class="btn btn-light dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
    			 	<i class="fa-solid fa-bars"></i>
   			</a>
 		  <div class="dropdown-menu">
-		    <a class="dropdown-item" href="#"><i class="fa-solid fa-paper-plane"></i>DM</a>
-		    <a class="dropdown-item" href="/sns/controller/WritePage"><i class="fa-solid fa-pen"></i>Write</a>
-		    <a class="dropdown-item" href="/sns/controller/HomePage"><i class="fa-solid fa-house"></i>Home</a>
-		    <a class="dropdown-item" href="/sns/controller/SettingPage"><i class="fa-solid fa-gear"></i>Setting</a>
-		    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logout"><i class="fa-solid fa-arrow-right-from-bracket"></i>LogOut</a>
+		    <a class="dropdown-item" href="#"><i class="fa-solid fa-paper-plane"></i>&nbsp;DM</a>
+		    <a class="dropdown-item" href="/sns/controller/WritePage"><i class="fa-solid fa-pen"></i>&nbsp;Write</a>
+		    <a class="dropdown-item" href="/sns/controller/HomePage"><i class="fa-solid fa-house"></i>&nbsp;Home</a>
+		    <a class="dropdown-item" href="/sns/controller/SettingPage"><i class="fa-solid fa-gear"></i>&nbsp;Setting</a>
+		    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logout"><i class="fa-solid fa-arrow-right-from-bracket"></i>&nbsp;LogOut</a>
 		  </div>
 		</div>
 		</li>

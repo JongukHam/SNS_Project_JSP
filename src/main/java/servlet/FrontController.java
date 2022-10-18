@@ -94,6 +94,9 @@ public class FrontController extends HttpServlet {
 		case "/LoginPage":
 			request.getRequestDispatcher("/Login/Login.jsp").forward(request, response);
 			break;
+		case "/SignUpPage":
+			request.getRequestDispatcher("/Login/SignUp.jsp").forward(request, response);
+			break;
 		case "/SettingPage":
 			showMemberInfo(request,response,session);
 			break;
@@ -164,9 +167,12 @@ public class FrontController extends HttpServlet {
 			
 			
 		
-		//임시
+		//로그인 회원가입
 		case "/Login":
 			setLogin(request,response,session);
+			break;
+		case "/SignUp":
+			setSignup(request,response);
 			break;
 		
 		//=========================추가 시작
@@ -393,17 +399,49 @@ public class FrontController extends HttpServlet {
 	//====================================================//
 	
 	//=======================Log=======================//
-	// 테스트용으로 로그인
-	private void setLogin(HttpServletRequest request,HttpServletResponse response,HttpSession session)throws ServletException, IOException{
-		response.setContentType("text/html;charset=utf-8");
-		session.setAttribute("memberId", request.getParameter("mid"));
-		response.sendRedirect("/sns/controller/HomePage");
-	}
+	public void setLogin(HttpServletRequest request, HttpServletResponse response,HttpSession session) throws ServletException, IOException { 
+		PrintWriter out = response.getWriter();  
+		request.setCharacterEncoding("utf-8");
+
+	      String mid = request.getParameter("mid"); 
+	      String pw = request.getParameter("pw");
+	      
+	      memberDAO dao = new memberDAO();   // memberDAO에 가서 db 조회해서 리턴
+	      memberDTO dto = dao.login(mid, pw); 
+	      
+	      // id, pw 둘다 맞으면 
+	      if (dto.getMid() != null) { 
+	         session.setAttribute("memberId", mid); // 로그인된 아이디 설정
+	         response.sendRedirect("/sns/controller/HomePage");
+	      }
+	      // id, pw 둘중 하나라도 틀리면
+	      else {
+	    	 out.println("<script> alert('없는 계정이거나, 입력 정보가 틀렸습니다.');location.href='/sns/controller/LoginPage'; </script>;");
+	      }      
+	      dao.close();
+	   }
+
 	
 	private void setLogout(HttpServletRequest request,HttpServletResponse response,HttpSession session)throws ServletException, IOException{
 		session.removeAttribute("memberId");
 		response.sendRedirect("/sns/controller/LoginPage");
 	}
+	
+	//회원가입
+	 public void setSignup(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	      request.setCharacterEncoding("utf-8");
+	      HttpSession session = request.getSession();
+	      PrintWriter out = response.getWriter();
+	      String singUpState="";
+	      
+	      memberDAO dao = new memberDAO();
+	      singUpState = dao.signup(request, response);
+	      out.println(singUpState);
+	   }
+
+	
+	
+	
 	
 	//====================================================//
 	

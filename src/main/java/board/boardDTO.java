@@ -9,9 +9,16 @@ public class boardDTO {
     private String likeCount;
     private String photo;
     private String id;
+    private String photo2;
 
     
     
+	public String getPhoto2() {
+		return photo2;
+	}
+	public void setPhoto2(String photo2) {
+		this.photo2 = photo2;
+	}
 	private String pfp;
 	private String commentCount;
 	

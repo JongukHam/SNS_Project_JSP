@@ -82,153 +82,180 @@ public class boardDAO extends JDBConnect {
 	
 	//=======================add from saemin START=======================//
 	// Home/Home - 게시물 조회
-		public String selectBoard(HttpServletRequest request, HttpServletResponse response, String bid, String comment, String commentDetail, String pageRoute) {
-			String pageMove = "/Home/Home.jsp";
-			ArrayList<boardDTO> listBoard = new ArrayList<boardDTO>();
-			ArrayList<commentDTO> listComment = new ArrayList<commentDTO>();
-			ArrayList<boardDTO> likeWhoId = new ArrayList<boardDTO>();
-			HttpSession session = request.getSession();
-			String LoginId = (String)session.getAttribute("memberId");
-			ResultSet rs2;
-	        try {
-	        	
-	        	String query = "SELECT A.bid as '글번호', A.content as '글내용', A.likecount as '좋아요갯수', A.birth as '글쓴날짜', A.id as '글쓴이', A.photo as '글사진', B.pfp as '글쓴이프사', A.likeWho as '좋아요리스트',"+
-	                    "(SELECT count(content) FROM commenttbl C WHERE A.bid = C.id) as '댓글 갯수'"+
-	                    "FROM boardtbl A LEFT OUTER JOIN membertbl B "+
-	                    "ON A.id = B.mid WHERE NOT A.id IN ('"+LoginId +"') ORDER BY A.birth DESC";
-	        	
-	            stmt = con.createStatement();
-	            rs = stmt.executeQuery(query);
-	            
-	            // commenttbl에 댓글이 1개 이상일때
-	            if (rs.next()) {
-	            	rs = stmt.executeQuery(query);
-	            	
-	            	while (rs.next()) {
-	                	boardDTO bdto = new boardDTO();
-	                	bdto.setBid(rs.getString("bid"));
-	                    bdto.setContent(rs.getString("content"));     
-	                    bdto.setLikeCount(rs.getString("likeCount"));
-	                    String[] birth = rs.getString("birth").substring(0, 10).split("-");
-	    				if (birth[1].substring(0, 1).equals("0")) {
-	    					birth[1] = birth[1].substring(1);
-	    				}
-	    				if (birth[2].substring(0, 1).equals("0")) {
-	    					birth[2] = birth[2].substring(1);
-	    				}
-	    				bdto.setBirth(birth[0] + "년 " + birth[1] + "월 " + birth[2] + "일");
-	                    bdto.setPfp(rs.getString("pfp"));
-	                    bdto.setId(rs.getString("id"));
-	                    bdto.setPhoto(rs.getString("photo"));
-	                    bdto.setCommentCount(rs.getString(9));
-	                    
-	                    ////////////////////////////////////////////
-	                    // 좋아요 리스트 조회에 필요한 코드, 미완성
-	                    
-	                    String db =  rs.getString("likeWho"); // a, b
-	                    String[] db2 = db.split(", ");
-		            	
-		            	
-		            	for (int i = 0; i < db2.length; i++) {
-		            		boardDTO bdtoLike = new boardDTO();
-		            		bdtoLike.setLikeId(db2[i]);
-		            		bdtoLike.setBid(rs.getString("bid"));
-		            		likeWhoId.add(bdtoLike);
-		        		}
-	                    
-	                    
-	                    //////////////////////////////////////////
-	                    
-	                    listBoard.add(bdto);
-	                    
-	                    if (!rs.getString(9).equals("0")) {
-	                    	query = "SELECT DISTINCT C.cid, C.content, C.birth, C.likeCount, C.id\r\n"
-	                    			+ ", (SELECT B.pfp FROM membertbl B WHERE C.cid=B.mid)\r\n"
-	                    			+ "FROM membertbl B, commenttbl C WHERE id=?";
-	                    	psmt = con.prepareStatement(query);
-	                    	psmt.setString(1, rs.getString("bid"));
-	    					rs2 = psmt.executeQuery();
-	    					
-	    					while (rs2.next()) {
-	    						commentDTO cdto = new commentDTO();
-	    						cdto.setContent(rs2.getString("content"));
-	    						String[] birth2 = rs2.getString("birth").substring(0, 10).split("-");
-	    						if (birth2[1].substring(0, 1).equals("0")) {
-	    							birth2[1] = birth2[1].substring(1);
-	    						}
-	    						if (birth[2].substring(0, 1).equals("0")) {
-	    							birth2[2] = birth2[2].substring(1);
-	    						}
-	    						cdto.setBirth(birth2[0] + "년 " + birth2[1] + "월 " + birth2[2] + "일");
-	    						cdto.setLikeCount(rs2.getString("likeCount"));
-	    						cdto.setId(rs2.getString("id"));
-	    						cdto.setCid(rs2.getString("cid"));
-	    						cdto.setPfp(rs2.getString(6));
-	    						listComment.add(cdto);
-	    					}
-	    				}
-	    			}
-				}
-	            
-	            // commenttbl에 댓글이 없을때
-	            else {
-					try {
-						query = "SELECT A.bid as '글번호', A.content as '글내용', A.likecount as '좋아요갯수', A.birth as '글쓴날짜', A.id as '글쓴이', A.photo as '글사진', B.pfp as '글쓴이프사', A.likeWho as '좋아요리스트',"+
-			                    "FROM boardtbl A LEFT OUTER JOIN membertbl B "+
-			                    "ON A.id = B.mid WHERE NOT A.id IN ('"+LoginId +"') ORDER BY A.birth DESC";
-			            stmt.close();
-			            rs.close();
-						stmt = con.createStatement();
-			            rs = stmt.executeQuery(query);
-			            
-			            while (rs.next()) {
-		                	boardDTO bdto = new boardDTO();
-		                	bdto.setBid(rs.getString("bid"));
-		                    bdto.setContent(rs.getString("content"));     
-		                    bdto.setLikeCount(rs.getString("likeCount"));
-		                    String[] birth = rs.getString("birth").substring(0, 10).split("-");
-		    				if (birth[1].substring(0, 1).equals("0")) {
-		    					birth[1] = birth[1].substring(1);
-		    				}
-		    				if (birth[2].substring(0, 1).equals("0")) {
-		    					birth[2] = birth[2].substring(1);
-		    				}
-		    				bdto.setBirth(birth[0] + "년 " + birth[1] + "월 " + birth[2] + "일");
-		                    bdto.setPfp(rs.getString("pfp"));
-		                    bdto.setId(rs.getString("id"));
-		                    bdto.setPhoto(rs.getString("photo"));
-		                    bdto.setCommentCount("0");
-		                    listBoard.add(bdto);
-		    			}
-			            
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-	            
-	            // board
-	            request.setAttribute("listBoard", listBoard);
-	            request.setAttribute("listComment", listComment);
-	            request.setAttribute("boardCount", session.getAttribute("boardCount"));
-	            session.removeAttribute("boardCount");
-	            
-	            // 좋아요
-	            request.setAttribute("likeWhoId", likeWhoId);
-	            
-	            // 댓글
-	            request.setAttribute("bid", bid);
-	            request.setAttribute("comment", comment);
-	            request.setAttribute("commentDetail", commentDetail);
-	            request.setAttribute("pageRoute", pageRoute);
-	            
-	            System.out.println("게시물 조회 성공");
-	        }
-	        catch (Exception e) {
-	            System.out.println("게시물 조회 실패");
-	            e.printStackTrace();
-	        }
-	        return pageMove;
-	    }
+	public String selectBoard(HttpServletRequest request, HttpServletResponse response, String bid, String comment, String commentDetail, String pageRoute) {
+        String pageMove = "/Home/Home.jsp";
+        ArrayList<boardDTO> listBoard = new ArrayList<boardDTO>();
+        ArrayList<commentDTO> listComment = new ArrayList<commentDTO>();
+        ArrayList<boardDTO> likeWhoId = new ArrayList<boardDTO>();
+        ArrayList<boardDTO> photo = new ArrayList<boardDTO>();
+        
+        HttpSession session = request.getSession();
+        String memberId = (String)session.getAttribute("memberId");
+        ResultSet rs2;
+        
+          try {
+             String query = "SELECT A.bid, A.content, A.likecount, A.birth, A.id, A.photo, B.pfp, A.likeWho,\r\n"
+                   + "(SELECT count(content) FROM commenttbl C WHERE A.bid = C.id)\r\n"
+                   + "FROM boardtbl A LEFT OUTER JOIN membertbl B \r\n"
+                   + "ON A.id = B.mid ORDER BY A.birth DESC";
+//                   + "ON A.id = B.mid WHERE NOT A.id IN (?) ORDER BY A.birth DESC";
+              psmt = con.prepareStatement(query);
+              rs = psmt.executeQuery();
+              
+              // commenttbl에 댓글이 1개 이상일때
+              if (rs.next()) {
+                 rs = psmt.executeQuery();
+                 
+                 while (rs.next()) {
+                     boardDTO bdto = new boardDTO();
+                     bdto.setBid(rs.getString("bid"));
+                     bdto.setId(rs.getString("id"));
+                      bdto.setContent(rs.getString("content"));     
+                      bdto.setLikeCount(rs.getString("likeCount"));
+                      String[] birth = rs.getString("birth").substring(0, 10).split("-");
+                  if (birth[1].substring(0, 1).equals("0")) {
+                     birth[1] = birth[1].substring(1);
+                  }
+                  if (birth[2].substring(0, 1).equals("0")) {
+                     birth[2] = birth[2].substring(1);
+                  }
+                  bdto.setBirth(birth[0] + "년 " + birth[1] + "월 " + birth[2] + "일");
+                      bdto.setPfp(rs.getString("pfp"));
+                      
+                      bdto.setCommentCount(rs.getString(9));
+                      
+                      // 좋아요 쉼표 분리
+                      
+                      String db =  rs.getString("likeWho"); // a, b
+                      String[] db2 = db.split(", ");
+                    
+                    for (int i = 0; i < db2.length; i++) {
+                       boardDTO bdtoLike = new boardDTO();
+                       bdtoLike.setLikeId(db2[i]);
+                       bdtoLike.setBid(rs.getString("bid"));
+                       likeWhoId.add(bdtoLike);
+                   }
+                    
+                    
+                      // photo 쉼표 분리
+                    
+                    String db3 =  rs.getString("photo"); // a,b
+                      String[] db4 = db3.split(",");       // [a, b]
+                      
+                      
+                      
+                    for (int i = 0; i < db4.length; i++) {
+                       boardDTO bdtoPhoto = new boardDTO();
+                       bdtoPhoto.setBid(rs.getString("bid"));
+                       bdtoPhoto.setPhoto(db4[i]);
+                       
+                       ///////////////
+                       bdtoPhoto.setPhoto2(db4[i].replace("\\", "\\\\"));
+                       ///////////////
+                       photo.add(bdtoPhoto);
+                   }
+                    
+                    
+                    
+                    
+                    //////////////////////////////////////////
+                    
+                      listBoard.add(bdto);
+                      
+                      if (!rs.getString(9).equals("0")) {
+                         query = "SELECT DISTINCT C.cid, C.content, C.birth, C.likeCount, C.id\r\n"
+                               + ", (SELECT B.pfp FROM membertbl B WHERE C.cid=B.mid)\r\n"
+                               + "FROM membertbl B, commenttbl C WHERE id=?";
+//                         psmt.close();
+                         psmt = con.prepareStatement(query);
+                         psmt.setString(1, rs.getString("bid"));
+                     rs2 = psmt.executeQuery();
+                     
+                     while (rs2.next()) {
+                        commentDTO cdto = new commentDTO();
+                        cdto.setContent(rs2.getString("content"));
+                        String[] birth2 = rs2.getString("birth").substring(0, 10).split("-");
+                        if (birth2[1].substring(0, 1).equals("0")) {
+                           birth2[1] = birth2[1].substring(1);
+                        }
+                        if (birth[2].substring(0, 1).equals("0")) {
+                           birth2[2] = birth2[2].substring(1);
+                        }
+                        cdto.setBirth(birth2[0] + "년 " + birth2[1] + "월 " + birth2[2] + "일");
+                        cdto.setLikeCount(rs2.getString("likeCount"));
+                        cdto.setId(rs2.getString("id"));
+                        cdto.setCid(rs2.getString("cid"));
+                        cdto.setPfp(rs2.getString(6));
+                        listComment.add(cdto);
+                     }
+                  }
+               }
+           }
+              
+              // commenttbl에 댓글이 없을때
+              else {
+//                 rs.close();
+              try {
+//                 query = "SELECT A.bid, A.content, A.likecount, A.birth, A.id, A.photo, B.pfp, B.mid\r\n"
+//                       + "FROM boardtbl A, membertbl B GROUP BY A.bid ORDER BY birth DESC";
+                 query = "SELECT A.bid, A.content, A.likecount, A.birth, A.id, A.photo, B.pfp, A.likeWho\r\n"
+                       + "FROM boardtbl A LEFT OUTER JOIN membertbl B \r\n"
+                       + "ON A.id = B.mid ORDER BY A.birth DESC";
+//                 + "ON A.id = B.mid WHERE NOT A.id IN (?) ORDER BY A.birth DESC";
+                 psmt = con.prepareStatement(query);
+//                 psmt.setString(1, memberId);
+                    rs = psmt.executeQuery();
+                    
+                    while (rs.next()) {
+                        boardDTO bdto = new boardDTO();
+                        bdto.setBid(rs.getString("bid"));
+                         bdto.setContent(rs.getString("content"));     
+                         bdto.setLikeCount(rs.getString("likeCount"));
+                         String[] birth = rs.getString("birth").substring(0, 10).split("-");
+                     if (birth[1].substring(0, 1).equals("0")) {
+                        birth[1] = birth[1].substring(1);
+                     }
+                     if (birth[2].substring(0, 1).equals("0")) {
+                        birth[2] = birth[2].substring(1);
+                     }
+                     bdto.setBirth(birth[0] + "년 " + birth[1] + "월 " + birth[2] + "일");
+                         bdto.setPfp(rs.getString("pfp"));
+                         bdto.setId(rs.getString("id"));
+                         bdto.setPhoto(rs.getString("photo"));
+                         bdto.setCommentCount("0");
+                         listBoard.add(bdto);
+                  }
+              } catch (Exception e) {
+                 e.printStackTrace();
+              }
+           }
+              
+              // board
+              request.setAttribute("listBoard", listBoard);
+              request.setAttribute("listComment", listComment);
+              request.setAttribute("boardCount", session.getAttribute("boardCount"));
+              session.removeAttribute("boardCount");
+              
+              // 좋아요
+              request.setAttribute("likeWhoId", likeWhoId);
+              
+              // 댓글
+              request.setAttribute("bid", bid);
+              request.setAttribute("comment", comment);
+              request.setAttribute("commentDetail", commentDetail);
+              request.setAttribute("pageRoute", pageRoute);
+              
+              // Photo
+              request.setAttribute("photo", photo);
+              
+              System.out.println("게시물 조회 성공");
+          }
+          catch (Exception e) {
+              System.out.println("게시물 조회 실패");
+              e.printStackTrace();
+          }
+          return pageMove;
+      }
 			
 		// Home/Home - 게시물 상세 조회
 	      public String selectBoardDetail(HttpServletRequest request, HttpServletResponse response, String bid) {

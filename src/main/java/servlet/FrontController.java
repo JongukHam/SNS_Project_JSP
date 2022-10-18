@@ -179,13 +179,9 @@ public class FrontController extends HttpServlet {
 			
 			
 		case "/selectBoard":
-			pageMove = selectBoard(request, response, bid, comment, commentDetail, pageRoute);
+			pageMove = selectBoard(request, response, bid, comment, commentDetail, pageRoute,m2id);
 			request.getRequestDispatcher(pageMove).forward(request, response);
 			//
-			break;
-		case "/selectBoardDetail":
-			pageMove = selectBoardDetail(request, response, bid);
-			request.getRequestDispatcher(pageMove).forward(request, response);
 			break;
 		case "/likeWho":
 			pageMove = likeWho(request, response, bid, boardCount);
@@ -472,22 +468,14 @@ public class FrontController extends HttpServlet {
 	//=======================add from saemin START=======================//
 	
 	// Home/Home.jsp - 게시물 조회
-		public String selectBoard(HttpServletRequest request, HttpServletResponse response, String bid, String comment, String commentDetail, String pageRoute) throws ServletException, IOException {
+		public String selectBoard(HttpServletRequest request, HttpServletResponse response, String bid, String comment, String commentDetail, String pageRoute, String m2id) throws ServletException, IOException {
 			String pageMove ="";
 			boardDAO dao = new boardDAO(); 
-			pageMove =dao.selectBoard(request, response, bid, comment, commentDetail, pageRoute);
+			pageMove =dao.selectBoard(request, response, bid, comment, commentDetail, pageRoute,m2id);
 			dao.close();
 			return pageMove;
 		}
 		
-		// Home/Home.jsp - 게시물 상세 조회
-		public String selectBoardDetail(HttpServletRequest request, HttpServletResponse response, String bid) throws ServletException, IOException {
-			String pageMove ="";
-			boardDAO dao = new boardDAO();
-			pageMove =dao.selectBoardDetail(request, response, bid);
-			dao.close();
-			return pageMove;
-		}
 
 		// Home/Home.jsp - 게시물 좋아요 누가누가 조회
 		public String likeWho(HttpServletRequest request, HttpServletResponse response, String bid, String boardCount) throws ServletException, IOException {

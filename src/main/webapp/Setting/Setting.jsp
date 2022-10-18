@@ -93,43 +93,44 @@
 
 <!-- 모달창 -->
 
-<!-- 로그아웃 모달 -->
-	<div class="modal" id="logout">
-		<div class="modal-dialog">
-			<div class="modal-content">
 
-				<!-- Modal Header -->
-				<div class="modal-header">
-					<h4 class="modal-title">로그아웃</h4>
-				</div>
 
-				<!-- Modal body -->
-				<div class="modal-body">
-					<p>로그아웃 하시겠습니까?
-				</div>
-
-				<!-- Modal footer -->
-				<div class="modal-footer">
+   <%-- 로그아웃 모달 코드 --%>
+   <div class="modal fade" id="logout" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable">
+         <div class="modal-content" id="modalContent">
+            <div class="modal-header" id="modalHeader">
+            	<h4 class="modal-title">로그아웃</h4>
+               <h5 id="h5" class="modal-title" id="exampleModalLabel"></h5>
+               <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
+                  <span id="modalCloseSpan" aria-hidden="true">&times;</span>
+               </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+            	<p>로그아웃 하시겠습니까?
+            </div>
+            <div class="modal-footer">
 					<button type="button" class="btn btn-primary" data-dismiss="modal">취소</button>
 					<button type="button" class="btn btn-primary" data-dismiss="modal"onclick="location.href='/sns/controller/Logout'">로그아웃</button>
 				</div>
-			</div>
-		</div>
-	</div>
-	
-<!-- 	삭제 모달 -->
-	<div class="modal" id="delAcModal">
-		<div class="modal-dialog">
-			<div class="modal-content">
-
-				<!-- Modal Header -->
-				<div class="modal-header">
-					<h4 class="modal-title">회원탈퇴</h4>
-				</div>
-
-				<!-- Modal body -->
-				<div class="modal-body">
-					<p>회원탈퇴를 위해서 패스워드를 입력해 주십시오
+         </div>
+      </div>
+   </div>
+   <%-- 로그아웃 모달 코드 --%>
+   
+   <%-- 삭제 모달 코드 --%>
+   <div class="modal fade" id="delAcModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable">
+         <div class="modal-content" id="modalContent">
+            <div class="modal-header" id="modalHeader">
+            	<h4 class="modal-title">회원탈퇴</h4>
+               <h5 id="h5" class="modal-title" id="exampleModalLabel"></h5>
+               <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
+                  <span id="modalCloseSpan" aria-hidden="true">&times;</span>
+               </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+            	<p>회원탈퇴를 위해서 패스워드를 입력해 주십시오
 					<form id="deleteAccountForm" name="deleteAccountForm" class="was-validated" action="/sns/controller/deleteAccount">
 						<div>
 							<input type="password" name="password" class="form-control deleteInputPw" required />
@@ -146,35 +147,36 @@
 							<button type="button" class="btn btn-danger" data-dismiss="modal"onclick="deleteSubmit()">회원탈퇴</button>
 						</div>
 					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-
-<!-- 계정 비공개 모달 -->
-<div class="modal" id="changePrivate">
-		<div class="modal-dialog">
-			<div class="modal-content">
-
-				<!-- Modal Header -->
-				<div class="modal-header">
-					<h4 class="modal-title">계정 공개 설정</h4>
-				</div>
-
-				<!-- Modal body -->
-				<div class="modal-body">
-					<p>계정의 공개범위를 변경 하시겠습니까?
-				</div>
-
-				<!-- Modal footer -->
-				<div class="modal-footer">
+            </div>
+         </div>
+      </div>
+   </div>
+   <%-- 삭제 모달 코드 --%>
+   
+   <%-- 비공개 모달 코드 --%>
+   <div class="modal fade" id="changePrivate" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable">
+         <div class="modal-content" id="modalContent">
+            <div class="modal-header" id="modalHeader">
+            	<h4 class="modal-title">계정 공개 설정</h4>
+               <h5 id="h5" class="modal-title" id="exampleModalLabel"></h5>
+               <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
+                  <span id="modalCloseSpan" aria-hidden="true">&times;</span>
+               </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+            	<p>계정의 공개범위를 변경 하시겠습니까?
+            </div>
+            <div class="modal-footer">
 					<button type="button" class="btn btn-primary" data-dismiss="modal">취소</button>
 					<button type="button" class="btn btn-primary" data-dismiss="modal"onclick="location.href='/sns/controller/changePrivateStatus'">상태변경</button>
 				</div>
-			</div>
-		</div>
-	</div>
+         </div>
+      </div>
+   </div>
+   <%-- 비공개 모달 코드 --%>
 
+	
 
 </body>
 </html>

@@ -132,5 +132,28 @@
     
     
     </ul>
+    
+       <%-- 로그아웃 모달 코드 --%>
+   <div class="modal fade" id="logout" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable">
+         <div class="modal-content" id="modalContent">
+            <div class="modal-header" id="modalHeader">
+            	<h4 class="modal-title">로그아웃</h4>
+               <h5 id="h5" class="modal-title" id="exampleModalLabel"></h5>
+               <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
+                  <span id="modalCloseSpan" aria-hidden="true">&times;</span>
+               </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+            	<p>로그아웃 하시겠습니까?
+            </div>
+            <div class="modal-footer">
+					<button type="button" class="btn btn-light" data-dismiss="modal">취소</button>
+					<button type="button" class="btn btn-light" data-dismiss="modal"onclick="location.href='/sns/controller/Logout'">로그아웃</button>
+				</div>
+         </div>
+      </div>
+   </div>
+   <%-- 로그아웃 모달 코드 --%>
 
   </nav>

@@ -1,4 +1,5 @@
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%-- <jsp:include page="../CssLink/CssLink.jsp" flush="true" /> --%>
 <style type="text/css">
    
    /* 무한 스크롤 */

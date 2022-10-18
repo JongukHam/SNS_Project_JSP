@@ -12,9 +12,9 @@
 <meta charset="UTF-8">
 <title>Home</title>
 </head>   
-<body>
+<body style="background-color: #f5f5f5;">
 
-   01345
+   0
    
    <a id="toTop" href="#">맨위로</a> 
     
@@ -48,7 +48,6 @@
    <!-- ─────────────────────────────────────────────────────────────────────────── -->
    <!-- 전체 게시물 출력 시작 -->
    
-   <div id="test" style="background-color: #f5f5f5;">
       <br><br>
       <div class="container">
          <section>
@@ -149,7 +148,6 @@
          </section>
       </div>
       <br><br><br>
-   </div>
    
    <!-- 전체 게시물 출력 종료 -->
    <!-- ─────────────────────────────────────────────────────────────────────────── -->

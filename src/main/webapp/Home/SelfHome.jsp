@@ -34,7 +34,7 @@
 
 
 
-<body>
+<body style="background-color:grey;">
 	
 	<div class="container" id="profile">
 		<div class="box">

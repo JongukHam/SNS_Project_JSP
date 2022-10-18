@@ -139,12 +139,12 @@
          <div class="modal-content" id="modalContent">
             <div class="modal-header" id="modalHeader">
             	<h4 class="modal-title">로그아웃</h4>
-               <h5 id="h5" class="modal-title" id="exampleModalLabel"></h5>
+               <h5 id="h5" class="modal-title"></h5>
                <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
                   <span id="modalCloseSpan" aria-hidden="true">&times;</span>
                </button>
             </div>
-            <div class="modal-body" id="modal-body">
+            <div class="modal-body">
             	<p>로그아웃 하시겠습니까?
             </div>
             <div class="modal-footer">

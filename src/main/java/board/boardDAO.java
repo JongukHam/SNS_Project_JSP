@@ -248,182 +248,183 @@ public class boardDAO extends JDBConnect {
 		
 
 		// Home/Home.jsp - 게시물 좋아요 누가누가 조회
-		public String likeWho(HttpServletRequest request, HttpServletResponse response, String bid, String boardCount) {
-			
-	        String pageMove = "/Home/Home.jsp";
-	        HttpSession session = request.getSession();
-	        String memberId = (String)session.getAttribute("memberId");
-	        
-	        String getId=""; //종욱추가
-	        
-	        try {
-	        	String query = "SELECT likeWho,id FROM boardtbl WHERE bid=?";
-	        	
-	            psmt = con.prepareStatement(query);
-	        	psmt.setString(1, bid);
-	        	rs = psmt.executeQuery();
-				
-	        	// null만 아니면 if 들어감(사실상 무조건 들어감. 왜 이렇게 해놨지?)
-	        	if (rs.next()) {
-					String db = rs.getString(1);
-					getId = rs.getString("id"); // 종욱추가
-					// 좋아요 아무도 안눌렀으면 첫 좋아요
-					if (db.equals("")) {
-						try {
-							query = "UPDATE boardtbl SET likeWho = ? WHERE bid = ?";
-							psmt.close();
-							rs.close();
-				        	psmt = con.prepareStatement(query);
-				        	psmt.setString(1, memberId);
-				        	psmt.setString(2, bid);
-				        	psmt.executeUpdate();
-				        	
-				        	query = "UPDATE boardtbl SET likecount = likecount + 1 WHERE bid = ?";
-				        	psmt.close();
-							rs.close();
-				        	psmt = con.prepareStatement(query);
-				        	psmt.setString(1, bid);
-				        	psmt.executeUpdate();
-				        	
-				        	// 종욱 알림 추가
-				        	psmt.close();
-							rs.close();
-							String notice = String.format("%s님이 %s게시글에 좋아요를 눌렀습니다",memberId,bid);
-				        	query = "insert into noti(getid,putid,notice,created_at) values(?,?,?,now())";	
-				        	psmt = con.prepareStatement(query);
-							psmt.setString(1, getId);
-							psmt.setString(2, memberId);
-							psmt.setString(3, notice);
-							psmt.executeUpdate();
-							// 종욱 추가 끝
-				        	
-							System.out.println(memberId + "가 " + bid + "번 게시글 첫 좋아요 성공");
-						} 
-						catch (Exception e) {
-							System.out.println(memberId + "가 " + bid + "번 게시글 첫 좋아요 실패");
-							e.printStackTrace();
-						}
-					}
-					
-					// 좋아요 1 이상일때
-					else {
+	// Home/Home.jsp - 게시물 좋아요 누가누가 조회
+    public String likeWho(HttpServletRequest request, HttpServletResponse response, String bid, String boardCount) {
+       
+         String pageMove = "/Home/Home.jsp";
+         HttpSession session = request.getSession();
+         String memberId = (String)session.getAttribute("memberId");
+         
+         String getId=""; //종욱추가
+         
+         try {
+            String query = "SELECT likeWho,id FROM boardtbl WHERE bid=?";
+            
+             psmt = con.prepareStatement(query);
+            psmt.setString(1, bid);
+            rs = psmt.executeQuery();
+          
+            // null만 아니면 if 들어감(사실상 무조건 들어감. 왜 이렇게 해놨지?)
+            if (rs.next()) {
+             String db = rs.getString(1);
+             getId = rs.getString("id"); // 종욱추가
+             // 좋아요 아무도 안눌렀으면 첫 좋아요
+             if (db.equals("")) {
+                try {
+                   query = "UPDATE boardtbl SET likeWho = ? WHERE bid = ?";
+                   psmt.close();
+                   rs.close();
+                     psmt = con.prepareStatement(query);
+                     psmt.setString(1, memberId);
+                     psmt.setString(2, bid);
+                     psmt.executeUpdate();
+                     
+                     query = "UPDATE boardtbl SET likecount = likecount + 1 WHERE bid = ?";
+                     psmt.close();
+                   rs.close();
+                     psmt = con.prepareStatement(query);
+                     psmt.setString(1, bid);
+                     psmt.executeUpdate();
+                     
+                     // 종욱 알림 추가
+                     psmt.close();
+                   rs.close();
+                   String notice = String.format("%s님이 %s게시글에 좋아요를 눌렀습니다",memberId,bid);
+                     query = "insert into noti(getid,putid,notice,created_at) values(?,?,?,now())";   
+                     psmt = con.prepareStatement(query);
+                   psmt.setString(1, getId);
+                   psmt.setString(2, memberId);
+                   psmt.setString(3, notice);
+                   psmt.executeUpdate();
+                   // 종욱 추가 끝
+                     
+                   System.out.println(memberId + "가 " + bid + "번 게시글 첫 좋아요 성공");
+                } 
+                catch (Exception e) {
+                   System.out.println(memberId + "가 " + bid + "번 게시글 첫 좋아요 실패");
+                   e.printStackTrace();
+                }
+             }
+             
+             // 좋아요 1 이상일때
+             else {
 
-						String[] db2 = db.split(", ");
-		            	ArrayList<boardDTO> likeWho = new ArrayList<boardDTO>();
-		            	
-		            	// 변수 db에 담긴 문자열들(아이디들)을 ,와 공백을 제거하여(숫자만 골라내기위해서) ArrayList에 담는다
-		            	for (int i = 0; i < db2.length; i++) {
-		            		boardDTO bdto = new boardDTO();
-		            		bdto.setId(db2[i]);
-		            		likeWho.add(bdto);
-		        		}
-		            	
-		            	// 현재 로그인한 아이디가 ArrayList에 있는지 검색
-		            	for (int i = 0; i < likeWho.size(); i++) {
-		            		
-		            		// 현재 로그인한 아이디가 ArrayList에 있으면(이미 좋아요를 눌렀으면) likeWho 배열에서 아이디 삭제
-							if (likeWho.get(i).getId().equals(memberId)) {
-								likeWho.remove(i);
-								db = "";
-							}
-		            	}
-		            	
-		            	// 현재 로그인한 아이디가 ArrayList에 있으면 좋아요 취소	            	
-		            	if (db.equals("")) {
-							
-		            		// 현재 로그인한 아이디가 삭제된 ArrayList에 있는 값들을 다시 Database에 넣기위해 변수 db에 담는다
-			            	for (int k = 0; k < likeWho.size(); k++) {
-			        			if (k == likeWho.size() - 1) {
-			        				db += likeWho.get(k).getId();
-			        				break;
-			        			}
-			        			db += likeWho.get(k).getId() + ", ";
-			        		}
-			            	
-			            	try {
-			            		query = "UPDATE boardtbl SET likeWho = ? WHERE bid = ?";
-								psmt.close();
-								rs.close();
-					        	psmt = con.prepareStatement(query);
-					        	psmt.setString(1, db);
-					        	psmt.setString(2, bid);
-					        	psmt.executeUpdate();
-					        	
-					        	query = "UPDATE boardtbl SET likecount = likecount - 1 WHERE bid = ?";
-					        	psmt.close();
-								rs.close();
-					        	psmt = con.prepareStatement(query);
-					        	psmt.setString(1, bid);
-					        	psmt.executeUpdate();
-					        	
-					        	// 종욱 알림 추가
-					        	psmt.close();
-								rs.close();
-								String notice = String.format("%s님이 %s게시글에 좋아요를 눌렀습니다",memberId,bid);
-					        	query = "delete from noti where notice=?";
-					        	psmt = con.prepareStatement(query);
-								psmt.setString(1, notice);
-								psmt.executeUpdate();
-								// 종욱 추가 끝
-					        	
-					        	System.out.println(memberId + "가 " + bid + "번 게시글 좋아요 취소 성공");
-							} catch (Exception e) {
-								e.printStackTrace();
-								System.out.println(memberId + "가 " + bid + "번 게시글 좋아요 취소 실패");
-							}
-						}
-								
-						// 현재 로그인한 아이디가 ArrayList에 없으면 좋아요
-						else {
-							try {
-								query = "UPDATE boardtbl SET likeWho = CONCAT(likeWho, ?) WHERE bid = ?";
-								psmt.close();
-								rs.close();
-					        	psmt = con.prepareStatement(query);
-					        	psmt.setString(1, ", " + memberId);
-					        	psmt.setString(2, bid);
-					        	psmt.executeUpdate();
+                String[] db2 = db.split(", ");
+                   ArrayList<boardDTO> likeWho = new ArrayList<boardDTO>();
+                   
+                   // 변수 db에 담긴 문자열들(아이디들)을 ,와 공백을 제거하여(숫자만 골라내기위해서) ArrayList에 담는다
+                   for (int i = 0; i < db2.length; i++) {
+                      boardDTO bdto = new boardDTO();
+                      bdto.setId(db2[i]);
+                      likeWho.add(bdto);
+                  }
+                   
+                   // 현재 로그인한 아이디가 ArrayList에 있는지 검색
+                   for (int i = 0; i < likeWho.size(); i++) {
+                      
+                      // 현재 로그인한 아이디가 ArrayList에 있으면(이미 좋아요를 눌렀으면) likeWho 배열에서 아이디 삭제
+                   if (likeWho.get(i).getId().equals(memberId)) {
+                      likeWho.remove(i);
+                      db = "";
+                   }
+                   }
+                   
+                   // 현재 로그인한 아이디가 ArrayList에 있으면 좋아요 취소                  
+                   if (db.equals("")) {
+                   
+                      // 현재 로그인한 아이디가 삭제된 ArrayList에 있는 값들을 다시 Database에 넣기위해 변수 db에 담는다
+                      for (int k = 0; k < likeWho.size(); k++) {
+                        if (k == likeWho.size() - 1) {
+                           db += likeWho.get(k).getId();
+                           break;
+                        }
+                        db += likeWho.get(k).getId() + ", ";
+                     }
+                      
+                      try {
+                         query = "UPDATE boardtbl SET likeWho = ? WHERE bid = ?";
+                      psmt.close();
+                      rs.close();
+                        psmt = con.prepareStatement(query);
+                        psmt.setString(1, db);
+                        psmt.setString(2, bid);
+                        psmt.executeUpdate();
+                        
+                        query = "UPDATE boardtbl SET likecount = likecount - 1 WHERE bid = ?";
+                        psmt.close();
+                      rs.close();
+                        psmt = con.prepareStatement(query);
+                        psmt.setString(1, bid);
+                        psmt.executeUpdate();
+                        
+                        // 종욱 알림 추가
+                        psmt.close();
+                      rs.close();
+                      String notice = String.format("%s님이 %s게시글에 좋아요를 눌렀습니다",memberId,bid);
+                        query = "delete from noti where notice=?";
+                        psmt = con.prepareStatement(query);
+                      psmt.setString(1, notice);
+                      psmt.executeUpdate();
+                      // 종욱 추가 끝
+                        
+                        System.out.println(memberId + "가 " + bid + "번 게시글 좋아요 취소 성공");
+                   } catch (Exception e) {
+                      e.printStackTrace();
+                      System.out.println(memberId + "가 " + bid + "번 게시글 좋아요 취소 실패");
+                   }
+                }
+                      
+                // 현재 로그인한 아이디가 ArrayList에 없으면 좋아요
+                else {
+                   try {
+                      query = "UPDATE boardtbl SET likeWho = CONCAT(likeWho, ?) WHERE bid = ?";
+                      psmt.close();
+                      rs.close();
+                        psmt = con.prepareStatement(query);
+                        psmt.setString(1, ", " + memberId);
+                        psmt.setString(2, bid);
+                        psmt.executeUpdate();
 
-					        	query = "UPDATE boardtbl SET likecount = likecount + 1 WHERE bid = ?";
-					        	psmt.close();
-								rs.close();
-					        	psmt = con.prepareStatement(query);
-					        	psmt.setString(1, bid);
-					        	psmt.executeUpdate();
-					        	
-					        	// 종욱 알림 추가
-					        	psmt.close();
-								rs.close();
-								String notice = String.format("%s님이 %s게시글에 좋아요를 눌렀습니다",memberId,bid);
-					        	query = "insert into noti(getid,putid,notice,created_at) values(?,?,?,now())";	
-					        	psmt = con.prepareStatement(query);
-								psmt.setString(1, getId);
-								psmt.setString(2, memberId);
-								psmt.setString(3, notice);
-								psmt.executeUpdate();
-								// 종욱 추가 끝
-								
-					        	System.out.println(memberId + "가 " + bid + "번 게시글 좋아요 성공");
-							} catch (Exception e) {
-								e.printStackTrace();
-								System.out.println(memberId + "가 " + bid + "번 게시글 좋아요 실패");
-								
-							}
-						}
-						request.setAttribute("likeWho", likeWho);
-					}
-				}
-	        	session.setAttribute("boardCount", boardCount);
-	            System.out.println(memberId + "가 " + bid + "번 게시글 좋아요 조회 성공");
-	        }
-	        
-	        
-	        catch (Exception e) {
-	        	System.out.println(memberId + "가 " + bid + "번 게시글 좋아요 조회 실패");
-	            e.printStackTrace();
-	        }
-	        return pageMove;
-	    }
+                        query = "UPDATE boardtbl SET likecount = likecount + 1 WHERE bid = ?";
+                        psmt.close();
+                      rs.close();
+                        psmt = con.prepareStatement(query);
+                        psmt.setString(1, bid);
+                        psmt.executeUpdate();
+                        
+                        // 종욱 알림 추가
+                        psmt.close();
+                      rs.close();
+                      String notice = String.format("%s님이 %s게시글에 좋아요를 눌렀습니다",memberId,bid);
+                        query = "insert into noti(getid,putid,notice,created_at) values(?,?,?,now())";   
+                        psmt = con.prepareStatement(query);
+                      psmt.setString(1, getId);
+                      psmt.setString(2, memberId);
+                      psmt.setString(3, notice);
+                      psmt.executeUpdate();
+                      // 종욱 추가 끝
+                      
+                        System.out.println(memberId + "가 " + bid + "번 게시글 좋아요 성공");
+                   } catch (Exception e) {
+                      e.printStackTrace();
+                      System.out.println(memberId + "가 " + bid + "번 게시글 좋아요 실패");
+                      
+                   }
+                }
+                request.setAttribute("likeWho", likeWho);
+             }
+          }
+            session.setAttribute("boardCount", boardCount);
+             System.out.println(memberId + "가 " + bid + "번 게시글 좋아요 조회 성공");
+         }
+         
+         
+         catch (Exception e) {
+            System.out.println(memberId + "가 " + bid + "번 게시글 좋아요 조회 실패");
+             e.printStackTrace();
+         }
+         return pageMove;
+     }
 		
 		
 		
